@@ -1,0 +1,36 @@
+# Unreal & Build
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vscode/
+.idea/
+.vs/
+*.VC.db
+*.sln
+*.suo
+*.opensdf
+*.sdf
+*.ipch
+*.xcodeproj
+*.xcworkspace
+
+# Platform-specific
+# (Mac) .DS_Store / (Windows) Thumbs.db
+.DS_Store
+Thumbs.db
+
+# Packaging / Local
+Build/*/Buid.properties
+*.log
+*.pdb
+*.tmp
+*.local
+*.opendb
+*.Visualizers
+
+# If you keep test captures
+Screenshots/
+
+# Visual Studio config
+.vsconfig
