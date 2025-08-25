@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,7 +7,8 @@
 #include "ACDQuestManager.generated.h"
 
 /**
- * 
+ * - GameInstanceSubsystem 기반 퀘스트 매니저
+ * - 퀘스트 수락/진행/완료 책임 및 중복 보상 방지
  */
 UCLASS()
 class ARPG_CONTETDEMO_API UACDQuestManager : public UGameInstanceSubsystem
