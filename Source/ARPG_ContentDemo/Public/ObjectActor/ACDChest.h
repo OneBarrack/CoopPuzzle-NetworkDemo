@@ -1,0 +1,30 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "ACDChest.generated.h"
+
+class UACDInteractableComponent;
+
+UCLASS()
+class ARPG_CONTENTDEMO_API AACDChest : public AActor
+{
+	GENERATED_BODY()
+	
+public:	
+	// Sets default values for this actor's properties
+	AACDChest();
+
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	UFUNCTION()
+	void OnInteracted(AActor* InstigatorActor);
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interact")
+	UACDInteractableComponent* Interactable = nullptr;
+};
