@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "ARPG_ContentDemoCharacter.h"
+#include "ThirdPersonSampleCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -14,9 +14,9 @@
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 //////////////////////////////////////////////////////////////////////////
-// AARPG_ContentDemoCharacter
+// AThirdPersonSampleCharacter
 
-AARPG_ContentDemoCharacter::AARPG_ContentDemoCharacter()
+AThirdPersonSampleCharacter::AThirdPersonSampleCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -57,7 +57,7 @@ AARPG_ContentDemoCharacter::AARPG_ContentDemoCharacter()
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void AARPG_ContentDemoCharacter::NotifyControllerChanged()
+void AThirdPersonSampleCharacter::NotifyControllerChanged()
 {
 	Super::NotifyControllerChanged();
 
@@ -71,7 +71,7 @@ void AARPG_ContentDemoCharacter::NotifyControllerChanged()
 	}
 }
 
-void AARPG_ContentDemoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AThirdPersonSampleCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
@@ -81,10 +81,10 @@ void AARPG_ContentDemoCharacter::SetupPlayerInputComponent(UInputComponent* Play
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AARPG_ContentDemoCharacter::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AThirdPersonSampleCharacter::Move);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AARPG_ContentDemoCharacter::Look);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AThirdPersonSampleCharacter::Look);
 	}
 	else
 	{
@@ -92,7 +92,7 @@ void AARPG_ContentDemoCharacter::SetupPlayerInputComponent(UInputComponent* Play
 	}
 }
 
-void AARPG_ContentDemoCharacter::Move(const FInputActionValue& Value)
+void AThirdPersonSampleCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -115,7 +115,7 @@ void AARPG_ContentDemoCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
-void AARPG_ContentDemoCharacter::Look(const FInputActionValue& Value)
+void AThirdPersonSampleCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();

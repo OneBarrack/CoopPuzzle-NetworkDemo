@@ -1,24 +1,26 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Character/ACDCharacter.h"
 #include "Component/ACDInteractionSensorComponent.h"
 
-// Sets default values
 AACDCharacter::AACDCharacter()
 {
-	PrimaryActorTick.bCanEverTick = true;
-
+	InteractionSensor = CreateDefaultSubobject<UACDInteractionSensorComponent>(TEXT("InteractionSensor"));
 }
 
 void AACDCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (InteractionSensor)
+	{
+		InteractionSensor->OnTargetChanged.AddDynamic(this, &AACDCharacter::OnInteractionTargetChanged);
+	}
 }
 
-void AACDCharacter::OnTargetChanged(AActor* NewTarget, const FText& PromptText)
+void AACDCharacter::OnInteractionTargetChanged(AActor* NewTarget, const FText& PromptText)
 {
 	const bool bShow = (NewTarget != nullptr);
-	BP_UpdateInteractPrompt(bShow, PromptText);
+	BP_UpdateInteractionPrompt(bShow, PromptText);
 }
