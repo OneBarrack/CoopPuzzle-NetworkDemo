@@ -44,11 +44,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Config", meta=(ClampMin="0.01"))
 	float UpdatePeriod = 0.1f;
 
-	UPROPERTY(BlueprintReadOnly, Category="State")
+	UPROPERTY(BlueprintReadOnly, Category="Interaction")
 	TWeakObjectPtr<AActor> CurrentTarget;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInteractTargetChanged, AActor*, NewTarget, const FText&, PromptText);
-	UPROPERTY(BlueprintAssignable, Category="Event")
+	UPROPERTY(BlueprintAssignable, Category="Interaction")
 	FOnInteractTargetChanged OnTargetChanged;
 
 private:

@@ -34,7 +34,7 @@ void UACDInteractionSensorComponent::SetupSensor()
 		return;
 	}
 
-	OverlapSensor = NewObject<USphereComponent>(GetOwner(), TEXT("InteractionSensor"));
+	OverlapSensor = NewObject<USphereComponent>(this, TEXT("InteractionSensor"));
 	if (OverlapSensor)
 	{
 		OverlapSensor->SetupAttachment(GetOwner()->GetRootComponent());
@@ -97,7 +97,7 @@ bool UACDInteractionSensorComponent::TryInteract(AActor* Instigator)
 	return false;
 }
 
-// ÇöÀç´Â ÃÖ¼Ò °Å¸® Interactable actor ÃßÃâ
+// í˜„ì¬ëŠ” ìµœì†Œ ê±°ë¦¬ Interactable actor ì¶”ì¶œ
 AActor* UACDInteractionSensorComponent::PickBestInteractable() const
 {
 	if (Candidates.Num() == 0)
@@ -107,7 +107,7 @@ AActor* UACDInteractionSensorComponent::PickBestInteractable() const
 
 	AActor* BestActor = nullptr;
 	const FVector OwnerLoc = GetOwner()->GetActorLocation();
-	float MinDistSq = TNumericLimits<float>::Max(); // ·çÆ® ¿¬»ê Àü °ªÀ¸·Î Ã¼Å©
+	float MinDistSq = TNumericLimits<float>::Max(); // ë£¨íŠ¸ ì—°ì‚° ì „ ê°’ìœ¼ë¡œ ì²´í¬
 	for (const TWeakObjectPtr<AActor>& Candidate : Candidates)
 	{
 		if (AActor* CandidateActor = Candidate.Get())
