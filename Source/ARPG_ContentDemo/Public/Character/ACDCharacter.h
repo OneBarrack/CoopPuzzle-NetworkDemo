@@ -20,13 +20,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UFUNCTION()
-	void OnInteractionTargetChanged(AActor* NewTarget, const FText& PromptText);
-
-	UFUNCTION(BlueprintImplementableEvent, Category="UI")
-	void BP_UpdateInteractionPrompt(bool bShow, const FText& PromptText);
-
-public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction")
 	UACDInteractionSensorComponent* InteractionSensor = nullptr;
 };
