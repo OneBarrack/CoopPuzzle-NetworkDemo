@@ -17,25 +17,25 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Interactable")
-	const bool CanInteract(AActor* Instigator) const { return !bConsumed; }
+	const bool CanInteract(AActor* InstigatorActor) const;
 
 	UFUNCTION(BlueprintCallable, Category="Interactable")
-	void DoInteract(AActor* Instigator);
+	const bool DoInteract(AActor* InstigatorActor);
 
 public:
-	// HUD¿¡ Ç¥½ÃÇÒ ÇÁ·ÒÇÁÆ® ÅØ½ºÆ®
+	// HUDì— í‘œì‹œí•  í”„ë¡¬í”„íŠ¸ í…ìŠ¤íŠ¸
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Interactable")
 	FText PromptText = FText::FromString(TEXT("Interact"));
 
-	// 1È¸¼º »óÈ£ÀÛ¿ë ¿©ºÎ(»óÀÚ/ÀÏÈ¸¼º ·¹¹ö µî)
+	// 1íšŒì„± ìƒí˜¸ì‘ìš© ì—¬ë¶€(ìƒì/ì¼íšŒì„± ë ˆë²„ ë“±)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="State")
 	bool bSingleUse = false;
 
-	// ÀÌ¹Ì »ç¿ëµÇ¾ú´ÂÁö(·±Å¸ÀÓ »óÅÂ)
+	// ì´ë¯¸ ì‚¬ìš©ë˜ì—ˆëŠ”ì§€(ëŸ°íƒ€ì„ ìƒíƒœ)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State")
 	bool bConsumed = false;
 
-	// ½ÇÁ¦ µ¿ÀÛ Ã³¸® µ¨¸®°ÔÀÌÆ® ¹ÙÀÎµù 
+	// ì‹¤ì œ ë™ì‘ ì²˜ë¦¬ ë¸ë¦¬ê²Œì´íŠ¸ ë°”ì¸ë”© 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteracted, AActor*, InstigatorActor);	
 	UPROPERTY(BlueprintAssignable)
 	FOnInteracted OnInteracted;

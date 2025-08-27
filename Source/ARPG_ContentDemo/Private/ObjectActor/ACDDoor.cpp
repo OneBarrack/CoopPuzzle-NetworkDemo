@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ObjectActor/ACDDoor.h"
@@ -8,18 +8,37 @@ AACDDoor::AACDDoor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	Interactable = CreateDefaultSubobject<UACDInteractableComponent>(TEXT("Interactable"));
-	Interactable->bSingleUse = true;
+	InteractableComponent = CreateDefaultSubobject<UACDInteractableComponent>(TEXT("Interactable"));
 }
 
 void AACDDoor::BeginPlay()
 {
 	Super::BeginPlay();
-	check(Interactable != nullptr);
-	Interactable->OnInteracted.AddDynamic(this, &AACDDoor::OnInteracted);
+
+	if (ensure(InteractableComponent))
+	{
+		InteractableComponent->OnInteracted.AddDynamic(this, &AACDDoor::OnInteracted);
+	}
 }
 
-void AACDDoor::OnInteracted(AActor* InstigatorActor)
+bool AACDDoor::CanInteract_Implementation(AActor* InstigatorActor) const
 {
-	UE_LOG(LogTemp, Log, TEXT("[%s] Door opened."), ANSI_TO_TCHAR(__FUNCTION__));
+	if (IsValid(InteractableComponent))
+	{
+		return InteractableComponent->CanInteract(InstigatorActor);
+	}
+	return false;
+}
+
+void AACDDoor::DoInteract_Implementation(AActor* InstigatorActor)
+{
+	if (IsValid(InteractableComponent))
+	{
+		InteractableComponent->DoInteract(InstigatorActor);
+	}
+}
+
+void AACDDoor::OnInteracted_Implementation(AActor* InstigatorActor)
+{
+	UE_LOG(LogTemp, Log, TEXT("[%s] Interacted with the door."), ANSI_TO_TCHAR(__FUNCTION__));
 }

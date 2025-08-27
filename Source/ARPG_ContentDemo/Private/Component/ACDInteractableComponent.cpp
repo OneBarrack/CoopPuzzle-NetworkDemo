@@ -8,14 +8,21 @@ UACDInteractableComponent::UACDInteractableComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UACDInteractableComponent::DoInteract(AActor* Instigator)
+const bool UACDInteractableComponent::CanInteract(AActor* InstigatorActor) const
 {
-	if (CanInteract(Instigator)) return;
+	return !bConsumed;
+}
 
-	OnInteracted.Broadcast(Instigator);
+const bool UACDInteractableComponent::DoInteract(AActor* InstigatorActor)
+{
+	if (!CanInteract(InstigatorActor)) return false;
+
+	OnInteracted.Broadcast(InstigatorActor);
 
 	if (bSingleUse)
 	{
 		bConsumed = true;
 	}
+
+	return true;
 }

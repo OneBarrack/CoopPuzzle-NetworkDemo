@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ObjectActor/ACDChest.h"
@@ -8,18 +8,38 @@ AACDChest::AACDChest()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	Interactable = CreateDefaultSubobject<UACDInteractableComponent>(TEXT("Interactable"));
-	Interactable->bSingleUse = true;
+	InteractableComponent = CreateDefaultSubobject<UACDInteractableComponent>(TEXT("Interactable"));
+	InteractableComponent->bSingleUse = true;
 }
 
 void AACDChest::BeginPlay()
 {
 	Super::BeginPlay();
-	check(Interactable != nullptr);
-	Interactable->OnInteracted.AddDynamic(this, &AACDChest::OnInteracted);
+	
+	if (ensure(InteractableComponent))
+	{
+		InteractableComponent->OnInteracted.AddDynamic(this, &AACDChest::OnInteracted);
+	}
 }
 
-void AACDChest::OnInteracted(AActor* InstigatorActor)
+bool AACDChest::CanInteract_Implementation(AActor* InstigatorActor) const
+{
+	if (IsValid(InteractableComponent))
+	{
+		return InteractableComponent->CanInteract(InstigatorActor);
+	}
+	return false;
+}
+
+void AACDChest::DoInteract_Implementation(AActor* InstigatorActor)
+{
+	if (IsValid(InteractableComponent))
+	{
+		InteractableComponent->DoInteract(InstigatorActor);
+	}
+}
+
+void AACDChest::OnInteracted_Implementation(AActor* InstigatorActor)
 {
 	UE_LOG(LogTemp, Log, TEXT("[%s] Chest opened"), ANSI_TO_TCHAR(__FUNCTION__));
 }

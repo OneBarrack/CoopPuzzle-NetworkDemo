@@ -60,7 +60,7 @@ void UACDInteractionSensorComponent::HandleOnBeginOverlap(UPrimitiveComponent* O
 void UACDInteractionSensorComponent::HandleOnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Candidates.Remove(OtherActor);
-	if (CurrentTarget == OtherActor)
+	if (GetCurrentTarget() == OtherActor)
 	{
 		SetCurrentTarget(nullptr);
 	}
@@ -78,7 +78,7 @@ void UACDInteractionSensorComponent::ForceUpdate()
 
 bool UACDInteractionSensorComponent::TryInteract(AActor* Instigator)
 {
-	if (AActor* Target = CurrentTarget.Get())
+	if (AActor* Target = GetCurrentTarget())
 	{
 		if (UACDInteractableComponent* IC = Target->FindComponentByClass<UACDInteractableComponent>())
 		{
@@ -131,7 +131,7 @@ AActor* UACDInteractionSensorComponent::PickBestInteractable() const
 
 void UACDInteractionSensorComponent::SetCurrentTarget(AActor* NewTarget)
 {
-	if (CurrentTarget.Get() == NewTarget)
+	if (GetCurrentTarget() == NewTarget)
 	{
 		return;
 	}
@@ -139,7 +139,7 @@ void UACDInteractionSensorComponent::SetCurrentTarget(AActor* NewTarget)
 	CurrentTarget = NewTarget;
 
 	FText Prompt;
-	if (const AActor* Target = CurrentTarget.Get())
+	if (const AActor* Target = GetCurrentTarget())
 	{
 		if (const UACDInteractableComponent* IC = Target->FindComponentByClass<UACDInteractableComponent>())
 		{
@@ -147,5 +147,5 @@ void UACDInteractionSensorComponent::SetCurrentTarget(AActor* NewTarget)
 		}
 	}
 
-	OnTargetChanged.Broadcast(CurrentTarget.Get(), Prompt);
+	OnTargetChanged.Broadcast(GetCurrentTarget(), Prompt);
 }

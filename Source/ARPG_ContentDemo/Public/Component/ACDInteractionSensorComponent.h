@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Control")
 	bool TryInteract(AActor* Instigator);
 
+	UFUNCTION(BlueprintPure, Category="Interaction")
+    AActor* GetCurrentTarget() const { return CurrentTarget.Get(); }
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -44,14 +47,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Config", meta=(ClampMin="0.01"))
 	float UpdatePeriod = 0.1f;
 
-	UPROPERTY(BlueprintReadOnly, Category="Interaction")
-	TWeakObjectPtr<AActor> CurrentTarget;
-
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInteractTargetChanged, AActor*, NewTarget, const FText&, PromptText);
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
 	FOnInteractTargetChanged OnTargetChanged;
 
 private:
+	UPROPERTY(Transient)
+	TWeakObjectPtr<AActor> CurrentTarget;
+
 	UPROPERTY(Transient)
 	USphereComponent* OverlapSensor = nullptr;
 
