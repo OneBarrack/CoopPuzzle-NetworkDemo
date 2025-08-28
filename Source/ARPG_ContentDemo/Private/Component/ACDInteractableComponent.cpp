@@ -8,12 +8,12 @@ UACDInteractableComponent::UACDInteractableComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-const bool UACDInteractableComponent::CanInteract(AActor* InstigatorActor) const
+bool UACDInteractableComponent::CanInteract(AActor* InstigatorActor) const
 {
 	return !bConsumed;
 }
 
-const bool UACDInteractableComponent::DoInteract(AActor* InstigatorActor)
+bool UACDInteractableComponent::DoInteract(AActor* InstigatorActor)
 {
 	if (!CanInteract(InstigatorActor)) return false;
 

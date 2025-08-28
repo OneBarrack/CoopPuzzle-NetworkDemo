@@ -16,11 +16,11 @@ public:
 	UACDInteractableComponent();
 
 public:
-	UFUNCTION(BlueprintCallable, Category="Interactable")
-	const bool CanInteract(AActor* InstigatorActor) const;
+	UFUNCTION()
+	bool CanInteract(AActor* InstigatorActor) const;
 
-	UFUNCTION(BlueprintCallable, Category="Interactable")
-	const bool DoInteract(AActor* InstigatorActor);
+	UFUNCTION()
+	bool DoInteract(AActor* InstigatorActor);
 
 public:
 	// HUD에 표시할 프롬프트 텍스트

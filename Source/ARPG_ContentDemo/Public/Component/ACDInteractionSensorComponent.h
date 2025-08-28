@@ -23,7 +23,7 @@ public:
 	bool TryInteract(AActor* Instigator);
 
 	UFUNCTION(BlueprintPure, Category="Interaction")
-    AActor* GetCurrentTarget() const { return CurrentTarget.Get(); }
+	TObjectPtr<AActor> GetCurrentTargetActor() const { return CurrentTargetActor.Get(); }
 
 protected:
 	virtual void BeginPlay() override;
@@ -35,10 +35,9 @@ protected:
     void HandleOnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 private:
-	void SetupSensor();
 	void UpdateInteractTarget();
-	AActor* PickBestInteractable() const;
-	void SetCurrentTarget(AActor* NewTarget);
+	TObjectPtr<AActor> PickBestInteractable() const;
+	void SetCurrentTarget(AActor* NewTargetActor);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Config")
@@ -47,16 +46,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Config", meta=(ClampMin="0.01"))
 	float UpdatePeriod = 0.1f;
 
+	UPROPERTY()
+	TObjectPtr<USphereComponent> SensorSphere;
+
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInteractTargetChanged, AActor*, NewTarget, const FText&, PromptText);
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
 	FOnInteractTargetChanged OnTargetChanged;
 
 private:
 	UPROPERTY(Transient)
-	TWeakObjectPtr<AActor> CurrentTarget;
-
-	UPROPERTY(Transient)
-	USphereComponent* OverlapSensor = nullptr;
+	TWeakObjectPtr<AActor> CurrentTargetActor;
 
 	TSet<TWeakObjectPtr<AActor>> Candidates;
 	FTimerHandle UpdateHandle;

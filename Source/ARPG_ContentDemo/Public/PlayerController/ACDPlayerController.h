@@ -14,15 +14,17 @@ class ARPG_CONTENTDEMO_API AACDPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
-public:
+protected:
     virtual void BeginPlay() override;
     virtual void OnPossess(APawn* InPawn) override;
     virtual void OnUnPossess() override;
 
+public:
+    UFUNCTION(BlueprintNativeEvent)
+    void OnInteractionTargetChanged(AActor* NewTarget, const FText& PromptText);
+    virtual void OnInteractionTargetChanged_Implementation(AActor* NewTarget, const FText& PromptText);
+
 private:
     UFUNCTION()
     void BindToPawnSensor(APawn* InPawn);
-
-    UFUNCTION()
-    void OnInteractionTargetChanged(AActor* NewTarget, const FText& PromptText);
 };

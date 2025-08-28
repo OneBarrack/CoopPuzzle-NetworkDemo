@@ -21,5 +21,5 @@ protected:
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction")
-	UACDInteractionSensorComponent* InteractionSensor = nullptr;
+	TObjectPtr<UACDInteractionSensorComponent> InteractionSensor = nullptr;
 };

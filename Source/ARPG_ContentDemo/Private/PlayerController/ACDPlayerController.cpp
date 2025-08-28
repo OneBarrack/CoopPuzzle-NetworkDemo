@@ -45,7 +45,7 @@ void AACDPlayerController::BindToPawnSensor(APawn* InPawn)
     }
 }
 
-void AACDPlayerController::OnInteractionTargetChanged(AActor* NewTarget , const FText& PromptText)
+void AACDPlayerController::OnInteractionTargetChanged_Implementation(AActor* NewTarget , const FText& PromptText)
 {
 
 }

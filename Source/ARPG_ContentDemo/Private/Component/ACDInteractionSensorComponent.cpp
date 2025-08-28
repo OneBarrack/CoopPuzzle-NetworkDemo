@@ -3,55 +3,45 @@
 
 #include "Component/ACDInteractionSensorComponent.h"
 #include "Component/ACDInteractableComponent.h"
-#include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
-#include "Engine/World.h"
-#include "GameFramework/Actor.h"
+#include "Interface/ACDInteractionInterface.h"
 #include "TimerManager.h"
 
 UACDInteractionSensorComponent::UACDInteractionSensorComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+
+	SensorSphere = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionSensor"));
+	if (SensorSphere)
+	{
+		SensorSphere->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+		SensorSphere->SetGenerateOverlapEvents(true);
+		SensorSphere->InitSphereRadius(SensorRadius);
+	}
 }
 
 void UACDInteractionSensorComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SetupSensor();
-
-	if (UpdatePeriod > 0.f)
+	
+	if (GetOwner())
 	{
-		GetWorld()->GetTimerManager().SetTimer(
-			UpdateHandle, this, &UACDInteractionSensorComponent::UpdateInteractTarget,
-			UpdatePeriod, true);
-	}
-}
+		SensorSphere->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		SensorSphere->OnComponentBeginOverlap.AddDynamic(this, &UACDInteractionSensorComponent::HandleOnBeginOverlap);
+		SensorSphere->OnComponentEndOverlap.AddDynamic(this, &UACDInteractionSensorComponent::HandleOnEndOverlap);
 
-void UACDInteractionSensorComponent::SetupSensor()
-{	
-	if (!IsValid(GetOwner()))
-	{
-		return;
-	}
-
-	OverlapSensor = NewObject<USphereComponent>(this, TEXT("InteractionSensor"));
-	if (OverlapSensor)
-	{
-		OverlapSensor->SetupAttachment(GetOwner()->GetRootComponent());
-		OverlapSensor->SetSphereRadius(SensorRadius);
-		OverlapSensor->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-		OverlapSensor->SetGenerateOverlapEvents(true);
-		OverlapSensor->RegisterComponent();
-
-		// Overlap delegates bind on Owner to keep dynamic binding compatible with BP.
-		OverlapSensor->OnComponentBeginOverlap.AddDynamic(this, &UACDInteractionSensorComponent::HandleOnBeginOverlap);
-		OverlapSensor->OnComponentEndOverlap.AddDynamic(this, &UACDInteractionSensorComponent::HandleOnEndOverlap);
+		if (UpdatePeriod > 0.f)
+		{
+			GetWorld()->GetTimerManager().SetTimer(
+				UpdateHandle, this, &UACDInteractionSensorComponent::UpdateInteractTarget,
+				UpdatePeriod, true);
+		}
 	}
 }
 
 void UACDInteractionSensorComponent::HandleOnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (IsValid(OtherActor) && OtherActor->FindComponentByClass<UACDInteractableComponent>())
+	if (IsValid(OtherActor) && OtherActor->GetClass()->ImplementsInterface(UACDInteractionInterface::StaticClass()))
 	{
 		Candidates.Add(OtherActor);
 	}
@@ -60,7 +50,7 @@ void UACDInteractionSensorComponent::HandleOnBeginOverlap(UPrimitiveComponent* O
 void UACDInteractionSensorComponent::HandleOnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Candidates.Remove(OtherActor);
-	if (GetCurrentTarget() == OtherActor)
+	if (GetCurrentTargetActor() == OtherActor)
 	{
 		SetCurrentTarget(nullptr);
 	}
@@ -78,26 +68,25 @@ void UACDInteractionSensorComponent::ForceUpdate()
 
 bool UACDInteractionSensorComponent::TryInteract(AActor* Instigator)
 {
-	if (AActor* Target = GetCurrentTarget())
+	if (AActor* TargetActor = GetCurrentTargetActor())
 	{
-		if (UACDInteractableComponent* IC = Target->FindComponentByClass<UACDInteractableComponent>())
+		if (IACDInteractionInterface::Execute_CanInteract(TargetActor, GetOwner()))
 		{
-			if (IC->CanInteract(Instigator))
-			{
-				IC->DoInteract(Instigator);
-
-				if (IC->bSingleUse && IC->bConsumed)
-				{
-					SetCurrentTarget(nullptr);
-				}
-				return true;
-			}
+			IACDInteractionInterface::Execute_DoInteract(TargetActor, GetOwner());
+			SetCurrentTarget(nullptr);
+			
+			return true;
 		}
 	}
+
 	return false;
 }
 
-// 현재는 최소 거리 Interactable actor 추출
+/*
+* 최적 타깃 선택. 
+* 현재는 최소 거리 Interactable actor 추출.
+* 필요시 이 함수만 LineTrace 등 추가 로직 구현 해주면 된다.
+*/ 
 AActor* UACDInteractionSensorComponent::PickBestInteractable() const
 {
 	if (Candidates.Num() == 0)
@@ -112,7 +101,7 @@ AActor* UACDInteractionSensorComponent::PickBestInteractable() const
 	{
 		if (AActor* CandidateActor = Candidate.Get())
 		{
-			if (!CandidateActor->FindComponentByClass<UACDInteractableComponent>())
+			if (!CandidateActor->GetClass()->ImplementsInterface(UACDInteractionInterface::StaticClass()))
 			{
 				continue;
 			}
@@ -129,23 +118,26 @@ AActor* UACDInteractionSensorComponent::PickBestInteractable() const
 	return BestActor;
 }
 
-void UACDInteractionSensorComponent::SetCurrentTarget(AActor* NewTarget)
+void UACDInteractionSensorComponent::SetCurrentTarget(AActor* NewTargetActor)
 {
-	if (GetCurrentTarget() == NewTarget)
+	if (GetCurrentTargetActor() == NewTargetActor)
 	{
 		return;
 	}
 
-	CurrentTarget = NewTarget;
+	CurrentTargetActor = NewTargetActor;
+
+	const FString TargetActorName = IsValid(CurrentTargetActor.Get()) ? *CurrentTargetActor->GetName() : FString(TEXT(""));
+	UE_LOG(LogTemp, Log, TEXT("[%s] Changed current target : [%s]"), ANSI_TO_TCHAR(__FUNCTION__), *TargetActorName);
 
 	FText Prompt;
-	if (const AActor* Target = GetCurrentTarget())
+	if (const AActor* Target = GetCurrentTargetActor())
 	{
 		if (const UACDInteractableComponent* IC = Target->FindComponentByClass<UACDInteractableComponent>())
 		{
 			Prompt = IC->PromptText;
 		}
 	}
-
-	OnTargetChanged.Broadcast(GetCurrentTarget(), Prompt);
+	
+	OnTargetChanged.Broadcast(GetCurrentTargetActor(), Prompt);
 }
