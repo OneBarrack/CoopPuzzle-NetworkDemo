@@ -23,7 +23,7 @@ public:
 	bool TryInteract(AActor* Instigator);
 
 	UFUNCTION(BlueprintPure, Category="Interaction")
-	TObjectPtr<AActor> GetCurrentTargetActor() const { return CurrentTargetActor.Get(); }
+	AActor* GetCurrentTargetActor() const { return CurrentTargetActor.Get(); }
 
 protected:
 	virtual void BeginPlay() override;

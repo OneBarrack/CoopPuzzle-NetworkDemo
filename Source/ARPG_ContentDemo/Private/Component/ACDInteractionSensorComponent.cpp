@@ -87,7 +87,7 @@ bool UACDInteractionSensorComponent::TryInteract(AActor* Instigator)
 * 현재는 최소 거리 Interactable actor 추출.
 * 필요시 이 함수만 LineTrace 등 추가 로직 구현 해주면 된다.
 */ 
-AActor* UACDInteractionSensorComponent::PickBestInteractable() const
+TObjectPtr<AActor> UACDInteractionSensorComponent::PickBestInteractable() const
 {
 	if (Candidates.Num() == 0)
 	{
