@@ -30,5 +30,5 @@ protected:
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interact")
-	UACDInteractableComponent* InteractableComponent = nullptr;
+	TObjectPtr<UACDInteractableComponent> InteractableComponent = nullptr;
 };
