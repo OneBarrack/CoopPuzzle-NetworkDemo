@@ -8,6 +8,13 @@
 
 class USphereComponent;
 
+/**
+ * 인터렉션 센서 컴포넌트 (Interaction Sensor Component)
+ * - 내부적으로 Sphere Subobject를 사용하여 주변 상호작용 후보를 Overlap으로 수집
+ * - 일정 주기(UpdatePeriod)마다 후보 중 타깃을 선택(PickBest…)하고,
+ *   OnTargetChanged 델리게이트로 UI에 알림
+ * - ForceUpdate()는 입력 직전 즉시 재평가를 가능하게 하여 반응성을 높임
+ */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_CONTENTDEMO_API UACDInteractionSensorComponent : public UActorComponent
 {

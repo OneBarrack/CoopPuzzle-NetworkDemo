@@ -53,6 +53,7 @@ void UACDInteractionSensorComponent::PostEditChangeProperty(FPropertyChangedEven
 }
 #endif
 
+// 오버랩 이벤트 바인딩 및 주기적 타깃 갱신 시작
 void UACDInteractionSensorComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -87,6 +88,7 @@ void UACDInteractionSensorComponent::EndPlay(const EEndPlayReason::Type EndPlayR
 	}
 }
 
+// 후보 액터가 InteractableComponent를 가지고 있다면 등록
 void UACDInteractionSensorComponent::HandleOnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (IsValid(OtherActor) && OtherActor->GetClass()->ImplementsInterface(UACDInteractionInterface::StaticClass()))
@@ -95,6 +97,7 @@ void UACDInteractionSensorComponent::HandleOnBeginOverlap(UPrimitiveComponent* O
 	}
 }
 
+// 후보 제거, 현재 타깃이 나가면 해제
 void UACDInteractionSensorComponent::HandleOnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Candidates.Remove(OtherActor);
@@ -114,6 +117,7 @@ void UACDInteractionSensorComponent::ForceUpdate()
 	UpdateInteractTarget();
 }
 
+// 현재 타깃의 인터페이스를 실행, 소모(bConsumed) 시 타깃 해제
 bool UACDInteractionSensorComponent::TryInteract(AActor* Instigator)
 {
 	if (AActor* TargetActor = GetCurrentTargetActor())
@@ -166,6 +170,7 @@ AActor* UACDInteractionSensorComponent::PickBestInteractable() const
 	return BestActor;
 }
 
+// 타깃이 바뀔 때만 FOnInteractTargetChanged 델리게이트 브로드캐스트
 void UACDInteractionSensorComponent::SetCurrentTarget(AActor* NewTargetActor)
 {
 	if (GetCurrentTargetActor() == NewTargetActor)

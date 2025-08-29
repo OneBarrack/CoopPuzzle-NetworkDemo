@@ -8,6 +8,11 @@
 
 class UACDInteractionSensorComponent;
 
+/**
+ * 캐릭터 클래스
+ * - InteractionSensor 컴포넌트를 보유
+ * - 입력 처리만 담당, 로직 대부분은 Sensor/Controller에 위임
+ */
 UCLASS()
 class ARPG_CONTENTDEMO_API AACDCharacter : public AThirdPersonSampleCharacter
 {

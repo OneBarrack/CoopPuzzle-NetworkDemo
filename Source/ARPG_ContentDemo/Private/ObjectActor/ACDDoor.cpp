@@ -21,6 +21,7 @@ void AACDDoor::BeginPlay()
 	}
 }
 
+// 인터렉션 가능 여부 체크 - InteractableComponent에 위임
 bool AACDDoor::CanInteract_Implementation(AActor* InstigatorActor) const
 {
 	if (IsValid(InteractableComponent))
@@ -30,6 +31,7 @@ bool AACDDoor::CanInteract_Implementation(AActor* InstigatorActor) const
 	return false;
 }
 
+// 인터렉션 실행 - InteractableComponent에 위임 + 연출 트리거
 void AACDDoor::DoInteract_Implementation(AActor* InstigatorActor)
 {
 	if (IsValid(InteractableComponent))

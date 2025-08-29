@@ -8,6 +8,7 @@
 
 /**
  * 액터가 상호작용 대상임을 나타내는 계약 인터페이스
+ * 실제 동작은 액터가 인터페이스를 상속받아 _Implementation에서 처리
  */
 UINTERFACE(Blueprintable)
 class ARPG_CONTENTDEMO_API UACDInteractionInterface : public UInterface

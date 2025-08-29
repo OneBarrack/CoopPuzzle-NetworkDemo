@@ -7,7 +7,10 @@
 #include "ACDPlayerController.generated.h"
 
 /**
- * 
+ * 플레이어 컨트롤러
+ * - 인터렉션 UI 처리 전담
+ * - 포제션 변경 시 Sensor 델리게이트를 안전하게 바인딩/해제
+ * - OnInteractionTargetChanged: 인터렉션 타겟 변경 대응
  */
 UCLASS()
 class ARPG_CONTENTDEMO_API AACDPlayerController : public APlayerController
