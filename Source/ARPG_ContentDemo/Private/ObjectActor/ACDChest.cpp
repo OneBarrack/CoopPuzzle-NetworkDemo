@@ -16,7 +16,7 @@ void AACDChest::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (ensure(InteractableComponent))
+	if (IsValid(InteractableComponent))
 	{
 		InteractableComponent->OnInteracted.AddDynamic(this, &AACDChest::OnInteracted);
 	}

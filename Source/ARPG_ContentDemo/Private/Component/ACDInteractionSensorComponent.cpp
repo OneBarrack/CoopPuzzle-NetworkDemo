@@ -24,6 +24,8 @@ void UACDInteractionSensorComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	Candidates.Empty();
+
 	if (IsValid(GetOwner()))
 	{
 		SensorSphere->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -32,10 +34,23 @@ void UACDInteractionSensorComponent::BeginPlay()
 
 		if (UpdatePeriod > 0.f)
 		{
-			GetWorld()->GetTimerManager().SetTimer(
+			if (UWorld* World = GetWorld())
+			{
+				World->GetTimerManager().SetTimer(
 				UpdateHandle, this, &UACDInteractionSensorComponent::UpdateInteractTarget,
 				UpdatePeriod, true);
+			}
 		}
+	}
+}
+
+void UACDInteractionSensorComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(UpdateHandle);
 	}
 }
 
@@ -87,7 +102,7 @@ bool UACDInteractionSensorComponent::TryInteract(AActor* Instigator)
 * 현재는 최소 거리 Interactable actor 추출.
 * 필요시 이 함수만 LineTrace 등 추가 로직 구현 해주면 된다.
 */ 
-TObjectPtr<AActor> UACDInteractionSensorComponent::PickBestInteractable() const
+AActor* UACDInteractionSensorComponent::PickBestInteractable() const
 {
 	if (Candidates.Num() == 0)
 	{

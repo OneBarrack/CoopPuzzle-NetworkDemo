@@ -15,7 +15,7 @@ void AACDDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (ensure(InteractableComponent))
+	if (IsValid(InteractableComponent))
 	{
 		InteractableComponent->OnInteracted.AddDynamic(this, &AACDDoor::OnInteracted);
 	}

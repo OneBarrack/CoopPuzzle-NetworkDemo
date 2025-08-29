@@ -16,7 +16,7 @@ void AACDLever::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (ensure(InteractableComponent))
+	if (IsValid(InteractableComponent))
 	{
 		InteractableComponent->OnInteracted.AddDynamic(this, &AACDLever::OnInteracted);
 	}
