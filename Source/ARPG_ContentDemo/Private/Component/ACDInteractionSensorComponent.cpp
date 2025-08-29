@@ -14,7 +14,7 @@ UACDInteractionSensorComponent::UACDInteractionSensorComponent()
 	SensorSphere = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionSensor"));
 	if (SensorSphere)
 	{
-		SensorSphere->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+		SensorSphere->SetCollisionProfileName(TEXT("InteractionSensor"));
 		SensorSphere->SetGenerateOverlapEvents(true);
 		SensorSphere->InitSphereRadius(SensorRadius);
 	}
@@ -24,7 +24,7 @@ void UACDInteractionSensorComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (GetOwner())
+	if (IsValid(GetOwner()))
 	{
 		SensorSphere->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		SensorSphere->OnComponentBeginOverlap.AddDynamic(this, &UACDInteractionSensorComponent::HandleOnBeginOverlap);
@@ -73,7 +73,7 @@ bool UACDInteractionSensorComponent::TryInteract(AActor* Instigator)
 		if (IACDInteractionInterface::Execute_CanInteract(TargetActor, GetOwner()))
 		{
 			IACDInteractionInterface::Execute_DoInteract(TargetActor, GetOwner());
-			SetCurrentTarget(nullptr);
+			UpdateInteractTarget();
 			
 			return true;
 		}
