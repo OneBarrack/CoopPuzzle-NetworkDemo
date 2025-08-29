@@ -9,7 +9,7 @@ AACDLever::AACDLever()
 	PrimaryActorTick.bCanEverTick = false;
 
 	InteractableComponent = CreateDefaultSubobject<UACDInteractableComponent>(TEXT("Interactable"));
-	InteractableComponent->bSingleUse = true;
+	InteractableComponent->SetSingleUse(true);
 }
 
 void AACDLever::BeginPlay()

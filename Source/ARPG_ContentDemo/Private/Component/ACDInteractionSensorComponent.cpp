@@ -15,6 +15,7 @@ UACDInteractionSensorComponent::UACDInteractionSensorComponent()
 	if (SensorSphere)
 	{
 		SensorSphere->SetCollisionProfileName(TEXT("InteractionSensor"));
+		SensorSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		SensorSphere->SetGenerateOverlapEvents(true);
 		SensorSphere->InitSphereRadius(SensorRadius);
 	}
@@ -125,7 +126,13 @@ bool UACDInteractionSensorComponent::TryInteract(AActor* Instigator)
 		if (IACDInteractionInterface::Execute_CanInteract(TargetActor, GetOwner()))
 		{
 			IACDInteractionInterface::Execute_DoInteract(TargetActor, GetOwner());
-			UpdateInteractTarget();
+			if (const UACDInteractableComponent* InteractionComponent = TargetActor->FindComponentByClass<UACDInteractableComponent>())
+			{
+				if (InteractionComponent->IsConsumed())
+				{
+					UpdateInteractTarget();
+				}
+			}
 			
 			return true;
 		}
@@ -184,11 +191,11 @@ void UACDInteractionSensorComponent::SetCurrentTarget(AActor* NewTargetActor)
 	UE_LOG(LogTemp, Log, TEXT("[%s] Changed current target : [%s]"), ANSI_TO_TCHAR(__FUNCTION__), *TargetActorName);
 
 	FText Prompt;
-	if (const AActor* Target = GetCurrentTargetActor())
+	if (const AActor* TargetActor = GetCurrentTargetActor())
 	{
-		if (const UACDInteractableComponent* IC = Target->FindComponentByClass<UACDInteractableComponent>())
+		if (const UACDInteractableComponent* InteractionComponent = TargetActor->FindComponentByClass<UACDInteractableComponent>())
 		{
-			Prompt = IC->PromptText;
+			Prompt = InteractionComponent->GetPromptText();
 		}
 	}
 	

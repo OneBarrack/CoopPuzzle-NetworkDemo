@@ -21,7 +21,6 @@ class ARPG_CONTENTDEMO_API UACDInteractableComponent : public UActorComponent
 public:	
 	UACDInteractableComponent();
 
-public:
 	UFUNCTION()
 	bool CanInteract(AActor* InstigatorActor) const;
 
@@ -29,20 +28,37 @@ public:
 	bool DoInteract(AActor* InstigatorActor);
 
 public:
-	// HUD에 표시할 프롬프트 텍스트
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Interactable")
-	FText PromptText = FText::FromString(TEXT("Interact"));
+	UFUNCTION(BlueprintPure)
+	FText GetPromptText() const { return PromptText; }
 
-	// 1회성 상호작용 여부(상자/일회성 레버 등)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="State")
-	bool bSingleUse = false;
+	UFUNCTION(BlueprintPure)
+	bool IsSingleUse() const { return bSingleUse; }
 
-	// 이미 사용되었는지(런타임 상태)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State")
-	bool bConsumed = false;
+	UFUNCTION(BlueprintPure)
+	bool IsConsumed() const { return bConsumed; }
 
+	UFUNCTION(BlueprintCallable)
+	void SetPromptText(const FText InPromptText) { PromptText = InPromptText; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetSingleUse(const bool bInSingleUse) { bSingleUse = bInSingleUse; }
+
+public:
 	// 실제 동작 처리 델리게이트 바인딩 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteracted, AActor*, InstigatorActor);	
 	UPROPERTY(BlueprintAssignable)
 	FOnInteracted OnInteracted;
+
+private:
+	// HUD에 표시할 프롬프트 텍스트
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Interactable", Meta = (AllowPrivateAccess = "true"))
+	FText PromptText = FText::GetEmpty();
+
+	// 1회성 상호작용 여부(상자/일회성 레버 등)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="State", Meta = (AllowPrivateAccess = "true"))
+	bool bSingleUse = false;
+
+	// 이미 사용되었는지(런타임 상태)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Meta = (AllowPrivateAccess = "true"))
+	bool bConsumed = false;
 };
