@@ -20,6 +20,39 @@ UACDInteractionSensorComponent::UACDInteractionSensorComponent()
 	}
 }
 
+#if WITH_EDITOR
+void UACDInteractionSensorComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	if (PropertyChangedEvent.MemberProperty == nullptr)
+		return;
+
+	const FName PropName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+	if (PropName == GET_MEMBER_NAME_CHECKED(UACDInteractionSensorComponent, SensorRadius))
+	{
+		if (IsValid(SensorSphere))
+		{
+			SensorSphere->SetSphereRadius(FMath::Max(10.f, SensorRadius), /*bUpdateOverlaps=*/true);
+		}
+	}
+	else if (PropName == GET_MEMBER_NAME_CHECKED(UACDInteractionSensorComponent, UpdatePeriod))
+	{
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().ClearTimer(UpdateHandle);
+			if (UpdatePeriod > 0.f)
+			{
+				World->GetTimerManager().SetTimer(
+					UpdateHandle, this, &UACDInteractionSensorComponent::UpdateInteractTarget,
+					UpdatePeriod, true
+				);
+			}
+		}
+	}
+}
+#endif
+
 void UACDInteractionSensorComponent::BeginPlay()
 {
 	Super::BeginPlay();

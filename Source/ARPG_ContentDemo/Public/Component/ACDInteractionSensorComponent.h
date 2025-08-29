@@ -16,6 +16,10 @@ class ARPG_CONTENTDEMO_API UACDInteractionSensorComponent : public UActorCompone
 public:
 	UACDInteractionSensorComponent();
 
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
+
 	UFUNCTION(BlueprintCallable, Category="Control")
 	void ForceUpdate();
 
