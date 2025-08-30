@@ -37,4 +37,11 @@ protected:
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interact")
 	TObjectPtr<UACDInteractableComponent> InteractableComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interact")
+	bool bIsOn = false;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangedLeverStatus, bool, bIsOn);
+	UPROPERTY(BlueprintAssignable)
+	FOnChangedLeverStatus OnChangedLeverStatus;
 };

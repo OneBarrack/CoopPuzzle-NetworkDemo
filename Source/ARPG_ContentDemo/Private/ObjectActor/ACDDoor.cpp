@@ -42,5 +42,8 @@ void AACDDoor::DoInteract_Implementation(AActor* InstigatorActor)
 
 void AACDDoor::OnInteracted_Implementation(AActor* InstigatorActor)
 {
-	UE_LOG(LogTemp, Log, TEXT("[%s] Interacted with the door."), ANSI_TO_TCHAR(__FUNCTION__));
+	bOpened = !bOpened;
+	OnChangedDoorStatus.Broadcast(bOpened);
+
+	UE_LOG(LogTemp, Log, TEXT("[%s] Interacted with the door. (%s)"), ANSI_TO_TCHAR(__FUNCTION__), bOpened ? TEXT("Opened") : TEXT("Closed"));
 }

@@ -9,7 +9,6 @@ AACDLever::AACDLever()
 	PrimaryActorTick.bCanEverTick = false;
 
 	InteractableComponent = CreateDefaultSubobject<UACDInteractableComponent>(TEXT("Interactable"));
-	InteractableComponent->SetSingleUse(true);
 }
 
 void AACDLever::BeginPlay()
@@ -43,6 +42,9 @@ void AACDLever::DoInteract_Implementation(AActor* InstigatorActor)
 
 void AACDLever::OnInteracted_Implementation(AActor* InstigatorActor)
 {
-	UE_LOG(LogTemp, Log, TEXT("[%s] Lever pulled."), ANSI_TO_TCHAR(__FUNCTION__));
+	bIsOn = !bIsOn;
+	OnChangedLeverStatus.Broadcast(bIsOn);
+
+	UE_LOG(LogTemp, Log, TEXT("[%s] Lever was activated. (%s)"), ANSI_TO_TCHAR(__FUNCTION__), bIsOn ? TEXT("ON") : TEXT("OFF"));
 }
 
