@@ -119,7 +119,7 @@ void UACDInteractionSensorComponent::ForceUpdate()
 }
 
 // 현재 타깃의 인터페이스를 실행, 소모(bConsumed) 시 타깃 해제
-bool UACDInteractionSensorComponent::TryInteract(AActor* Instigator)
+bool UACDInteractionSensorComponent::TryInteract()
 {
 	if (AActor* TargetActor = GetCurrentTargetActor())
 	{

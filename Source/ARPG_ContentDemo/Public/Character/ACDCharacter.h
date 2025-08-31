@@ -3,28 +3,41 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ARPG_ContentDemo/ThirdPersonSample/ThirdPersonSampleCharacter.h"
+#include "ACDCharacterBase.h"
 #include "ACDCharacter.generated.h"
 
 class UACDInteractionSensorComponent;
 
 /**
- * 캐릭터 클래스
  * - InteractionSensor 컴포넌트를 보유
- * - 입력 처리만 담당, 로직 대부분은 Sensor/Controller에 위임
+ * - Interact 입력 처리 (서버 RPC)
  */
 UCLASS()
-class ARPG_CONTENTDEMO_API AACDCharacter : public AThirdPersonSampleCharacter
+class ARPG_CONTENTDEMO_API AACDCharacter : public AACDCharacterBase
 {
 	GENERATED_BODY()
 
 public:
 	AACDCharacter();
 
+	UFUNCTION(BlueprintCallable, Category="Interact")
+	void Interact();
+
 protected:
 	virtual void BeginPlay() override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+    UFUNCTION(Server, Reliable)
+    void Server_Interact();
+
+private:
+    void DoInteract_Internal();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction")
 	TObjectPtr<UACDInteractionSensorComponent> InteractionSensor = nullptr;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+    TObjectPtr<UInputAction> InteractAction;
 };

@@ -31,7 +31,7 @@ public:
 	void ForceUpdate();
 
 	UFUNCTION(BlueprintCallable, Category="Control")
-	bool TryInteract(AActor* Instigator);
+	bool TryInteract();
 
 	UFUNCTION(BlueprintPure, Category="Interaction")
 	AActor* GetCurrentTargetActor() const { return CurrentTargetActor.Get(); }

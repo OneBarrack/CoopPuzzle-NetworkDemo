@@ -2,7 +2,10 @@
 
 
 #include "Character/ACDCharacter.h"
+#include "EnhancedInputComponent.h"
+#include "InputActionValue.h"
 #include "Component/ACDInteractionSensorComponent.h"
+#include "Interface/ACDInteractionInterface.h"
 
 AACDCharacter::AACDCharacter()
 {
@@ -12,4 +15,42 @@ AACDCharacter::AACDCharacter()
 void AACDCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AACDCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+    if (auto* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+    {
+        if (InteractAction)
+        {
+            EnhancedInput->BindAction(InteractAction, ETriggerEvent::Started, this, &AACDCharacter::Interact);
+        }
+    }
+}
+
+void AACDCharacter::Interact()
+{
+    if (HasAuthority())
+    {
+        DoInteract_Internal();
+    }
+    else
+    {
+        Server_Interact();
+    }
+}
+
+void AACDCharacter::Server_Interact_Implementation()
+{
+    DoInteract_Internal();
+}
+
+void AACDCharacter::DoInteract_Internal()
+{
+    if (IsValid(InteractionSensor))
+    {
+        InteractionSensor->TryInteract();
+    }
 }
