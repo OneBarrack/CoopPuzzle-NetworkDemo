@@ -3,6 +3,10 @@ Binaries/
 DerivedDataCache/
 Intermediate/
 Saved/
+Windows/
+WindowsServer/
+Packaged/
+Builds/
 .vscode/
 .idea/
 .vs/
