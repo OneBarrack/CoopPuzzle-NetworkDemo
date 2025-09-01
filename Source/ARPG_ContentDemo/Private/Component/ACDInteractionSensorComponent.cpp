@@ -81,7 +81,7 @@ void UACDInteractionSensorComponent::EndPlay(const EEndPlayReason::Type EndPlayR
 void UACDInteractionSensorComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UACDInteractionSensorComponent, CurrentTargetActor);
+	DOREPLIFETIME_CONDITION(UACDInteractionSensorComponent, CurrentTargetActor, COND_OwnerOnly);
 }
 
 void UACDInteractionSensorComponent::OnRegister()

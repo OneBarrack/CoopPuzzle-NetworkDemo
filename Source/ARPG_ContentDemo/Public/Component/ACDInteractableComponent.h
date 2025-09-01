@@ -9,7 +9,6 @@
 /*
  * 인터렉터블 컴포넌트 (Interactable Component)
  * - 액터의 상호작용 규칙 정의
- * - PromptText, bSingleUse, bConsumed 상태를 보관
  * - CanInteract(): 상호작용 가능한지 여부 확인
  * - DoInteract(): 델리게이트 브로드캐스트 후 멱등 처리
  */
@@ -21,10 +20,10 @@ class ARPG_CONTENTDEMO_API UACDInteractableComponent : public UActorComponent
 public:	
 	UACDInteractableComponent();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	bool CanInteract(AActor* InstigatorActor) const;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	bool DoInteract(AActor* InstigatorActor);
 
 	UFUNCTION(BlueprintPure)
@@ -33,18 +32,14 @@ public:
 	UFUNCTION(BlueprintPure)
 	int32 GetRemainingUseCount() const { return RemainingUseCount; }
 
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	UFUNCTION(BlueprintCallable)
 	void SetPromptText(const FText& NewPromptText) { PromptText = NewPromptText; }
 
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	UFUNCTION(BlueprintCallable)
 	void SetUseCount(const int32 UseCount) { RemainingUseCount = UseCount; }
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	// 서버 전용 실제 처리
-    UFUNCTION(Server, Reliable)
-    void Server_DoInteract(AActor* InstigatorActor);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_BroadcastOnInteracted(AActor* InstigatorActor);

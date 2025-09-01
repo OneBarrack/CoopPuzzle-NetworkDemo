@@ -17,32 +17,29 @@ void UACDInteractableComponent::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	DOREPLIFETIME(UACDInteractableComponent, RemainingUseCount);
 }
 
-// 상호작용 가능한지
 bool UACDInteractableComponent::CanInteract(AActor* InstigatorActor) const
 {
 	return (RemainingUseCount > 0) || (RemainingUseCount == InfiniteCount);
 }
 
-// OnInteracted 브로드캐스트, 1회성일 경우 bConsumed = true 처리
 bool UACDInteractableComponent::DoInteract(AActor* InstigatorActor)
 {
-	if (!GetOwner()) return false;
-	
-	Server_DoInteract(InstigatorActor);
-
-	return true;
-}
-
-void UACDInteractableComponent::Server_DoInteract_Implementation(AActor* InstigatorActor)
-{
-	if (!CanInteract(InstigatorActor)) return;
-
-	if (RemainingUseCount > 0)
+	if (GetOwner() && GetOwner()->HasAuthority())
 	{
-		--RemainingUseCount;
+		if (CanInteract(InstigatorActor))
+		{
+			if (RemainingUseCount > 0)
+			{
+				--RemainingUseCount;
+			}
+
+			Multicast_BroadcastOnInteracted(InstigatorActor);
+
+			return true;
+		}
 	}
 
-	Multicast_BroadcastOnInteracted(InstigatorActor);
+	return false;
 }
 
 void UACDInteractableComponent::Multicast_BroadcastOnInteracted_Implementation(AActor* InstigatorActor)
