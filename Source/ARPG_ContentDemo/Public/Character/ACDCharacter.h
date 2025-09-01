@@ -23,6 +23,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Interact")
 	void Interact();
 
+	UFUNCTION(Server, Reliable)
+	void Server_Interact(AActor* TargetActor);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

@@ -127,33 +127,4 @@ void AACDPlayerController::OnInteractionTargetChanged_Implementation(AActor* New
             UIManager->SetInteractionPrompt(FText::FromString(TEXT("상호작용 타겟변경")), IsValid(NewTarget));
         }
     }
-    // 상호작용 컴포넌트 OnRep 내부 등
-    //if (IsLocallyControlled())
-    //{
-        
-
-    // IsLocallyControlled()
-
-    // UI 대응 및 remaining count. 적재.
-    // OnChanged로 확인하자.
-    //FText Prompt;
-    //if (const AActor* TargetActor = GetCurrentTargetActor())
-    //{
-    //    if (const UACDInteractableComponent* InteractableComponent = TargetActor->FindComponentByClass<UACDInteractableComponent>())
-    //    {
-    //        Prompt = InteractableComponent->GetPromptText();
-    //    }
-    //}
-
-    // TODO : UI 대응 필요
-    /**
-    FText Prompt;
-    if (const AActor* TargetActor = GetCurrentTargetActor())
-    {
-        if (const UACDInteractableComponent* InteractableComponent = TargetActor->FindComponentByClass<UACDInteractableComponent>())
-        {
-            Prompt = InteractableComponent->GetPromptText();
-        }
-    }
-    */
 }

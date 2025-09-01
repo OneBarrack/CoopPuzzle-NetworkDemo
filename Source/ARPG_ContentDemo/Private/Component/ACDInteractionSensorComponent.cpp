@@ -87,9 +87,8 @@ void UACDInteractionSensorComponent::GetLifetimeReplicatedProps(TArray<FLifetime
 void UACDInteractionSensorComponent::OnRegister()
 {
 	Super::OnRegister();
-
-	
-	// 이미 만들어져 있으면 재생성 금지(PIE 반복/핫리로드 대비)
+		
+	// 이미 만들어져 있으면 재생성 하지 않음
 	if (SensorSphere || !GetOwner() || !GetOwner()->HasAuthority())
 	{
 		return;
@@ -100,12 +99,7 @@ void UACDInteractionSensorComponent::OnRegister()
 	{
 		// 센서 기본 설정
 		SensorSphere->InitSphereRadius(SensorRadius);
-		SensorSphere->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-		//SensorSphere->SetCollisionProfileName(TEXT("InteractionSensor"));
-		//SensorSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		//SensorSphere->SetCollisionObjectType(ECC_WorldDynamic);
-		//SensorSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
-		//SensorSphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+		SensorSphere->SetCollisionProfileName(TEXT("InteractionSensor"));
 		SensorSphere->SetGenerateOverlapEvents(true);
 		SensorSphere->SetCanEverAffectNavigation(false);
 		SensorSphere->SetHiddenInGame(true);
@@ -168,29 +162,6 @@ void UACDInteractionSensorComponent::ForceUpdate()
 	UpdateInteractTarget();
 }
 
-// 현재 타깃의 인터페이스를 실행, 다음 실행 불가 시 타깃 해제
-bool UACDInteractionSensorComponent::TryInteract()
-{
-	if (AActor* TargetActor = GetCurrentTargetActor())
-	{
-		if (IACDInteractionInterface::Execute_CanInteract(TargetActor, GetOwner()))
-		{
-			IACDInteractionInterface::Execute_DoInteract(TargetActor, GetOwner());
-			if (const UACDInteractableComponent* InteractionComponent = TargetActor->FindComponentByClass<UACDInteractableComponent>())
-			{
-				if (!InteractionComponent->CanInteract(GetOwner()))
-				{
-					UpdateInteractTarget();
-				}
-			}
-			
-			return true;
-		}
-	}
-
-	return false;
-}
-
 /*
 * 최적 타깃 선택. 
 * 현재는 최소 거리 Interactable actor 추출.
@@ -237,6 +208,6 @@ void UACDInteractionSensorComponent::SetCurrentTarget(AActor* NewTargetActor)
 
 	CurrentTargetActor = NewTargetActor;
 
-	const FString TargetActorName = IsValid(CurrentTargetActor.Get()) ? *CurrentTargetActor->GetName() : FString(TEXT(""));
+	const FString TargetActorName = IsValid(CurrentTargetActor) ? *CurrentTargetActor->GetName() : FString(TEXT(""));
 	UE_LOG(LogTemp, Log, TEXT("[%s] Changed current target : [%s]"), ANSI_TO_TCHAR(__FUNCTION__), *TargetActorName);
 }

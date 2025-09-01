@@ -7,6 +7,7 @@
 AACDChest::AACDChest()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	bReplicates = true;
 
 	InteractableComponent = CreateDefaultSubobject<UACDInteractableComponent>(TEXT("Interactable"));
 }

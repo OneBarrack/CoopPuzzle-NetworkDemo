@@ -30,11 +30,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Control")
 	void ForceUpdate();
 
-	UFUNCTION(BlueprintCallable, Category="Control")
-	bool TryInteract();
-
 	UFUNCTION(BlueprintPure, Category="Interaction")
-	AActor* GetCurrentTargetActor() const { return CurrentTargetActor.Get(); }
+	AActor* GetCurrentTargetActor() const { return CurrentTargetActor; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -73,7 +70,7 @@ public:
 
 private:
 	UPROPERTY(ReplicatedUsing = OnRep_CurrentTargetActor, Transient)
-	TWeakObjectPtr<AActor> CurrentTargetActor;
+	TObjectPtr<AActor> CurrentTargetActor;
 
 	TSet<TWeakObjectPtr<AActor>> Candidates;
 	FTimerHandle UpdateHandle;
