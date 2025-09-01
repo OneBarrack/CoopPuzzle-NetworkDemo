@@ -26,15 +26,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-    UFUNCTION(Server, Reliable)
-    void Server_Interact();
-
-private:
-    void DoInteract_Internal();
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	TObjectPtr<UACDInteractionSensorComponent> InteractionSensor = nullptr;
 
 protected:

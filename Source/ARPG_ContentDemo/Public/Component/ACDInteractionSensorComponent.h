@@ -39,6 +39,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void OnRegister() override;
+	virtual void OnUnregister() override;
 
 	UFUNCTION()
 	void HandleOnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -46,27 +49,30 @@ protected:
 	UFUNCTION()
     void HandleOnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	UFUNCTION()
+	void OnRep_CurrentTargetActor();
+
 private:
 	void UpdateInteractTarget();
 	AActor* PickBestInteractable() const;
 	void SetCurrentTarget(AActor* NewTargetActor);
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Config")
-	float SensorRadius = 200.f;
+	UPROPERTY(transient)
+	TObjectPtr<USphereComponent> SensorSphere = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Config", meta=(ClampMin="0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction|Sensor")
+	float SensorRadius = 120.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction|Sensor", meta=(ClampMin="0.01"))
 	float UpdatePeriod = 0.1f;
 
-	UPROPERTY()
-	TObjectPtr<USphereComponent> SensorSphere;
-
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInteractTargetChanged, AActor*, NewTarget, const FText&, PromptText);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractTargetChanged, AActor*, NewTarget);
 	UPROPERTY(BlueprintAssignable, Category="Interaction")
 	FOnInteractTargetChanged OnTargetChanged;
 
 private:
-	UPROPERTY(Transient)
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentTargetActor, Transient)
 	TWeakObjectPtr<AActor> CurrentTargetActor;
 
 	TSet<TWeakObjectPtr<AActor>> Candidates;

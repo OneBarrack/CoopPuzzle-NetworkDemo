@@ -27,24 +27,40 @@ public:
 	UFUNCTION()
 	bool DoInteract(AActor* InstigatorActor);
 
-public:
 	UFUNCTION(BlueprintPure)
 	FText GetPromptText() const { return PromptText; }
 
 	UFUNCTION(BlueprintPure)
-	bool IsSingleUse() const { return bSingleUse; }
+	int32 GetRemainingUseCount() const { return RemainingUseCount; }
 
-	UFUNCTION(BlueprintPure)
-	bool IsConsumed() const { return bConsumed; }
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	void SetPromptText(const FText& NewPromptText) { PromptText = NewPromptText; }
 
-	UFUNCTION(BlueprintCallable)
-	void SetPromptText(const FText InPromptText) { PromptText = InPromptText; }
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	void SetUseCount(const int32 UseCount) { RemainingUseCount = UseCount; }
 
-	UFUNCTION(BlueprintCallable)
-	void SetSingleUse(const bool bInSingleUse) { bSingleUse = bInSingleUse; }
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	// 서버 전용 실제 처리
+    UFUNCTION(Server, Reliable)
+    void Server_DoInteract(AActor* InstigatorActor);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_BroadcastOnInteracted(AActor* InstigatorActor);
+	
+	UFUNCTION()
+	void OnRep_RemainingUseCount();
 
 public:
-	// 실제 동작 처리 델리게이트 바인딩 
+	static const int32 InfiniteCount = INDEX_NONE; // 무한
+
+	// 남은 동작 횟수 델리게이트
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdatedRemainingUseCount);
+	UPROPERTY(BlueprintAssignable)
+	FOnUpdatedRemainingUseCount OnUpdatedRemainingUseCount;
+
+	// 실제 동작 처리 델리게이트
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteracted, AActor*, InstigatorActor);	
 	UPROPERTY(BlueprintAssignable)
 	FOnInteracted OnInteracted;
@@ -54,11 +70,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Interactable", Meta = (AllowPrivateAccess = "true"))
 	FText PromptText = FText::GetEmpty();
 
-	// 1회성 상호작용 여부(상자/일회성 레버 등)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="State", Meta = (AllowPrivateAccess = "true"))
-	bool bSingleUse = false;
-
-	// 이미 사용되었는지(런타임 상태)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", Meta = (AllowPrivateAccess = "true"))
-	bool bConsumed = false;
+	// 남은 상호작용 횟수
+	UPROPERTY(ReplicatedUsing = OnRep_RemainingUseCount, EditAnywhere, BlueprintReadOnly, Category="State", Meta = (ClampMin = "-1", AllowPrivateAccess = "true"))
+	int32 RemainingUseCount = InfiniteCount;
 };

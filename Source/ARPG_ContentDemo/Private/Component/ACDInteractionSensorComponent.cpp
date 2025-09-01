@@ -6,19 +6,12 @@
 #include "Components/SphereComponent.h"
 #include "Interface/ACDInteractionInterface.h"
 #include "TimerManager.h"
+#include "Net/UnrealNetwork.h"
 
 UACDInteractionSensorComponent::UACDInteractionSensorComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-	SensorSphere = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionSensor"));
-	if (SensorSphere)
-	{
-		SensorSphere->SetCollisionProfileName(TEXT("InteractionSensor"));
-		SensorSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		SensorSphere->SetGenerateOverlapEvents(true);
-		SensorSphere->InitSphereRadius(SensorRadius);
-	}
+	SetIsReplicatedByDefault(true);
 }
 
 #if WITH_EDITOR
@@ -61,12 +54,8 @@ void UACDInteractionSensorComponent::BeginPlay()
 	
 	Candidates.Empty();
 
-	if (IsValid(GetOwner()))
+	if (IsValid(GetOwner()) && GetOwner()->HasAuthority())
 	{
-		SensorSphere->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-		SensorSphere->OnComponentBeginOverlap.AddDynamic(this, &UACDInteractionSensorComponent::HandleOnBeginOverlap);
-		SensorSphere->OnComponentEndOverlap.AddDynamic(this, &UACDInteractionSensorComponent::HandleOnEndOverlap);
-
 		if (UpdatePeriod > 0.f)
 		{
 			if (UWorld* World = GetWorld())
@@ -89,6 +78,62 @@ void UACDInteractionSensorComponent::EndPlay(const EEndPlayReason::Type EndPlayR
 	}
 }
 
+void UACDInteractionSensorComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UACDInteractionSensorComponent, CurrentTargetActor);
+}
+
+void UACDInteractionSensorComponent::OnRegister()
+{
+	Super::OnRegister();
+
+	
+	// 이미 만들어져 있으면 재생성 금지(PIE 반복/핫리로드 대비)
+	if (SensorSphere || !GetOwner() || !GetOwner()->HasAuthority())
+	{
+		return;
+	}
+
+	SensorSphere = NewObject<USphereComponent>(GetOwner(), USphereComponent::StaticClass(), NAME_None, RF_Transient);
+	if (SensorSphere)
+	{
+		// 센서 기본 설정
+		SensorSphere->InitSphereRadius(SensorRadius);
+		SensorSphere->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+		//SensorSphere->SetCollisionProfileName(TEXT("InteractionSensor"));
+		//SensorSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		//SensorSphere->SetCollisionObjectType(ECC_WorldDynamic);
+		//SensorSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+		//SensorSphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+		SensorSphere->SetGenerateOverlapEvents(true);
+		SensorSphere->SetCanEverAffectNavigation(false);
+		SensorSphere->SetHiddenInGame(true);
+
+		if (USceneComponent* OwnerRoot = GetOwner()->GetRootComponent())
+		{
+			SensorSphere->SetupAttachment(OwnerRoot);
+		}
+
+		SensorSphere->RegisterComponent();
+
+		SensorSphere->OnComponentBeginOverlap.AddDynamic(this, &UACDInteractionSensorComponent::HandleOnBeginOverlap);
+		SensorSphere->OnComponentEndOverlap.AddDynamic(this, &UACDInteractionSensorComponent::HandleOnEndOverlap);
+	}
+}
+
+void UACDInteractionSensorComponent::OnUnregister()
+{
+	// OnRegister에서 만들었던 런타임 컴포넌트 정리
+	if (IsValid(SensorSphere))
+	{
+		SensorSphere->DestroyComponent();
+		SensorSphere = nullptr;
+	}
+
+	Super::OnUnregister();
+}
+
 // 후보 액터가 InteractableComponent를 가지고 있다면 등록
 void UACDInteractionSensorComponent::HandleOnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -108,6 +153,11 @@ void UACDInteractionSensorComponent::HandleOnEndOverlap(UPrimitiveComponent* Ove
 	}
 }
 
+void UACDInteractionSensorComponent::OnRep_CurrentTargetActor()
+{
+	OnTargetChanged.Broadcast(GetCurrentTargetActor());
+}
+
 void UACDInteractionSensorComponent::UpdateInteractTarget()
 {
 	SetCurrentTarget(PickBestInteractable());
@@ -118,7 +168,7 @@ void UACDInteractionSensorComponent::ForceUpdate()
 	UpdateInteractTarget();
 }
 
-// 현재 타깃의 인터페이스를 실행, 소모(bConsumed) 시 타깃 해제
+// 현재 타깃의 인터페이스를 실행, 다음 실행 불가 시 타깃 해제
 bool UACDInteractionSensorComponent::TryInteract()
 {
 	if (AActor* TargetActor = GetCurrentTargetActor())
@@ -128,7 +178,7 @@ bool UACDInteractionSensorComponent::TryInteract()
 			IACDInteractionInterface::Execute_DoInteract(TargetActor, GetOwner());
 			if (const UACDInteractableComponent* InteractionComponent = TargetActor->FindComponentByClass<UACDInteractableComponent>())
 			{
-				if (InteractionComponent->IsConsumed())
+				if (!InteractionComponent->CanInteract(GetOwner()))
 				{
 					UpdateInteractTarget();
 				}
@@ -189,15 +239,4 @@ void UACDInteractionSensorComponent::SetCurrentTarget(AActor* NewTargetActor)
 
 	const FString TargetActorName = IsValid(CurrentTargetActor.Get()) ? *CurrentTargetActor->GetName() : FString(TEXT(""));
 	UE_LOG(LogTemp, Log, TEXT("[%s] Changed current target : [%s]"), ANSI_TO_TCHAR(__FUNCTION__), *TargetActorName);
-
-	FText Prompt;
-	if (const AActor* TargetActor = GetCurrentTargetActor())
-	{
-		if (const UACDInteractableComponent* InteractionComponent = TargetActor->FindComponentByClass<UACDInteractableComponent>())
-		{
-			Prompt = InteractionComponent->GetPromptText();
-		}
-	}
-	
-	OnTargetChanged.Broadcast(GetCurrentTargetActor(), Prompt);
 }

@@ -31,12 +31,12 @@ protected:
 
 public:
     UFUNCTION(BlueprintNativeEvent)
-    void OnInteractionTargetChanged(AActor* NewTarget, const FText& PromptText);
-    virtual void OnInteractionTargetChanged_Implementation(AActor* NewTarget, const FText& PromptText);
+    void OnInteractionTargetChanged(AActor* NewTarget);
+    virtual void OnInteractionTargetChanged_Implementation(AActor* NewTarget);
 
 private:
     UFUNCTION()
-    void BindToPawnSensor(APawn* InPawn);
+    void BindToPawnSensor(APawn* NewPawn);
 
     UEnhancedInputLocalPlayerSubsystem* GetInputSubsystem() const;
     void AddContext(UInputMappingContext* Context, int32 Priority) const;

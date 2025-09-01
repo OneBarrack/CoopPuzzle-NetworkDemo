@@ -9,7 +9,8 @@
 
 AACDCharacter::AACDCharacter()
 {
-	InteractionSensor = CreateDefaultSubobject<UACDInteractionSensorComponent>(TEXT("InteractionSensor"));
+	InteractionSensor = CreateDefaultSubobject<UACDInteractionSensorComponent>(TEXT("InteractionSenSor"));
+    InteractionSensor->SetIsReplicated(true);
 }
 
 void AACDCharacter::BeginPlay()
@@ -31,23 +32,6 @@ void AACDCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 }
 
 void AACDCharacter::Interact()
-{
-    if (HasAuthority())
-    {
-        DoInteract_Internal();
-    }
-    else
-    {
-        Server_Interact();
-    }
-}
-
-void AACDCharacter::Server_Interact_Implementation()
-{
-    DoInteract_Internal();
-}
-
-void AACDCharacter::DoInteract_Internal()
 {
     if (IsValid(InteractionSensor))
     {

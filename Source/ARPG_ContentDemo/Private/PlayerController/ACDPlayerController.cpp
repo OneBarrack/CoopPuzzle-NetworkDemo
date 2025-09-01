@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
 #include "Blueprint/UserWidget.h"
+#include "Manager/ACDUIManager.h"
 
 void AACDPlayerController::BeginPlay()
 {
@@ -43,23 +44,23 @@ void AACDPlayerController::OnUnPossess()
     Super::OnUnPossess();
 }
 
-void AACDPlayerController::BindToPawnSensor(APawn* InPawn)
+void AACDPlayerController::BindToPawnSensor(APawn* NewPawn)
 {
     // 기존 바인딩 해제
     if (APawn* Old = GetPawn())
     {
-        if (UACDInteractionSensorComponent* OldSensor = Old->FindComponentByClass<UACDInteractionSensorComponent>())
+        if (UACDInteractionSensorComponent* OldInteractionSensor = Old->FindComponentByClass<UACDInteractionSensorComponent>())
         {
-            OldSensor->OnTargetChanged.RemoveAll(this);
+            OldInteractionSensor->OnTargetChanged.RemoveAll(this);
         }
     }
 
     // 새 폰 바인딩
-    if (IsValid(InPawn))
+    if (IsValid(NewPawn))
     {
-        if (UACDInteractionSensorComponent* Sensor = InPawn->FindComponentByClass<UACDInteractionSensorComponent>())
+        if (UACDInteractionSensorComponent* NewInteractionSensor = NewPawn->FindComponentByClass<UACDInteractionSensorComponent>())
         {
-            Sensor->OnTargetChanged.AddUniqueDynamic(this , &AACDPlayerController::OnInteractionTargetChanged);
+            NewInteractionSensor->OnTargetChanged.AddUniqueDynamic(this , &AACDPlayerController::OnInteractionTargetChanged);
         }
     }
 }
@@ -114,7 +115,45 @@ void AACDPlayerController::ToggleUIMode()
     }
 }
 
-void AACDPlayerController::OnInteractionTargetChanged_Implementation(AActor* NewTarget, const FText& PromptText)
+void AACDPlayerController::OnInteractionTargetChanged_Implementation(AActor* NewTarget)
 {
+    if (HasAuthority() || !IsLocalController())
+        return;
 
+    if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
+    {
+        if (UACDUIManager* UIManager = LocalPlayer->GetSubsystem<UACDUIManager>())
+        {
+            UIManager->SetInteractionPrompt(FText::FromString(TEXT("상호작용 타겟변경")), IsValid(NewTarget));
+        }
+    }
+    // 상호작용 컴포넌트 OnRep 내부 등
+    //if (IsLocallyControlled())
+    //{
+        
+
+    // IsLocallyControlled()
+
+    // UI 대응 및 remaining count. 적재.
+    // OnChanged로 확인하자.
+    //FText Prompt;
+    //if (const AActor* TargetActor = GetCurrentTargetActor())
+    //{
+    //    if (const UACDInteractableComponent* InteractableComponent = TargetActor->FindComponentByClass<UACDInteractableComponent>())
+    //    {
+    //        Prompt = InteractableComponent->GetPromptText();
+    //    }
+    //}
+
+    // TODO : UI 대응 필요
+    /**
+    FText Prompt;
+    if (const AActor* TargetActor = GetCurrentTargetActor())
+    {
+        if (const UACDInteractableComponent* InteractableComponent = TargetActor->FindComponentByClass<UACDInteractableComponent>())
+        {
+            Prompt = InteractableComponent->GetPromptText();
+        }
+    }
+    */
 }
