@@ -3,6 +3,7 @@
 
 #include "PlayerController/ACDPlayerController.h"
 #include "Component/ACDInteractionSensorComponent.h"
+#include "Component/ACDInteractableComponent.h"
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
 #include "Blueprint/UserWidget.h"
@@ -51,7 +52,7 @@ void AACDPlayerController::BindToPawnSensor(APawn* NewPawn)
     {
         if (UACDInteractionSensorComponent* OldInteractionSensor = Old->FindComponentByClass<UACDInteractionSensorComponent>())
         {
-            OldInteractionSensor->OnTargetChanged.RemoveAll(this);
+            OldInteractionSensor->OnTargetChanged.RemoveDynamic(this, &AACDPlayerController::OnInteractionTargetChanged);
         }
     }
 
@@ -90,6 +91,28 @@ void AACDPlayerController::RemoveContext(UInputMappingContext* Context) const
     }
 }
 
+void AACDPlayerController::UpdateInteractionTargetUIInfo()
+{
+    if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
+    {
+        if (UACDUIManager* UIManager = LocalPlayer->GetSubsystem<UACDUIManager>())
+        {
+            FText PromptText = FText::GetEmpty();
+            const bool bIsVisible = InteractionTarget.IsValid();
+
+            if (bIsVisible)
+            {
+                if (UACDInteractableComponent* InteractableComponent = InteractionTarget.Get()->FindComponentByClass<UACDInteractableComponent>())
+                {
+                    PromptText = InteractableComponent->GetPromptText();
+                }
+            }
+
+            UIManager->SetInteractionPrompt(PromptText, bIsVisible);
+        }
+    }
+}
+
 void AACDPlayerController::ToggleUIMode()
 {
     bUIMode = !bUIMode;
@@ -115,16 +138,28 @@ void AACDPlayerController::ToggleUIMode()
     }
 }
 
+// 상호작용 타겟 변경 및 타겟 상태 변화 델리게이트에 연결
 void AACDPlayerController::OnInteractionTargetChanged_Implementation(AActor* NewTarget)
 {
-    if (HasAuthority() || !IsLocalController())
+    if (!IsLocalController()) 
         return;
 
-    if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
+    if (InteractionTarget.IsValid())
     {
-        if (UACDUIManager* UIManager = LocalPlayer->GetSubsystem<UACDUIManager>())
+        if (UACDInteractableComponent* InteractableComponent = InteractionTarget.Get()->FindComponentByClass<UACDInteractableComponent>())
         {
-            UIManager->SetInteractionPrompt(FText::FromString(TEXT("상호작용 타겟변경")), IsValid(NewTarget));
+            InteractableComponent->OnChangedInteractInfo.RemoveAll(this);            
         }
     }
+
+    if (IsValid(NewTarget))
+    {
+        if (UACDInteractableComponent* InteractableComponent = NewTarget->FindComponentByClass<UACDInteractableComponent>())
+        {
+            InteractableComponent->OnChangedInteractInfo.AddUniqueDynamic(this, &AACDPlayerController::UpdateInteractionTargetUIInfo);
+        }
+    }
+
+    InteractionTarget = NewTarget;
+    UpdateInteractionTargetUIInfo();
 }

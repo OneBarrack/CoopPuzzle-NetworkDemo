@@ -38,6 +38,9 @@ private:
     UFUNCTION()
     void BindToPawnSensor(APawn* NewPawn);
 
+    UFUNCTION()
+    void UpdateInteractionTargetUIInfo();
+
     UEnhancedInputLocalPlayerSubsystem* GetInputSubsystem() const;
     void AddContext(UInputMappingContext* Context, int32 Priority) const;
     void RemoveContext(UInputMappingContext* Context) const;
@@ -57,4 +60,9 @@ public:
     // UI 액션
     UPROPERTY(EditDefaultsOnly, Category="Input")
     TObjectPtr<UInputAction> ToggleUIAction;
+
+private:
+    // 현재 상호작용 타겟
+    UPROPERTY(transient)
+    TWeakObjectPtr<AActor> InteractionTarget;
 };

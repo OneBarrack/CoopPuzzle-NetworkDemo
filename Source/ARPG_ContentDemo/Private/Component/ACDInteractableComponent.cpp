@@ -14,6 +14,8 @@ void UACDInteractableComponent::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(UACDInteractableComponent, InteractName);
+	DOREPLIFETIME(UACDInteractableComponent, InteractAction);
 	DOREPLIFETIME(UACDInteractableComponent, RemainingUseCount);
 }
 
@@ -42,12 +44,32 @@ bool UACDInteractableComponent::DoInteract(AActor* InstigatorActor)
 	return false;
 }
 
+FText UACDInteractableComponent::GetPromptText() const
+{
+	return FText::Format(FText::FromString(TEXT("{0} {1}")), FText::FromName(InteractName), InteractAction);;
+}
+
 void UACDInteractableComponent::Multicast_BroadcastOnInteracted_Implementation(AActor* InstigatorActor)
 {
 	OnInteracted.Broadcast(InstigatorActor);
 }
 
+void UACDInteractableComponent::BroadcastOnChangedInteractInfo()
+{
+	OnChangedInteractInfo.Broadcast();
+}
+
+void UACDInteractableComponent::OnRep_InteractName()
+{
+	BroadcastOnChangedInteractInfo();
+}
+
+void UACDInteractableComponent::OnRep_InteractAction()
+{
+	BroadcastOnChangedInteractInfo();
+}
+
 void UACDInteractableComponent::OnRep_RemainingUseCount()
 {
-	OnUpdatedRemainingUseCount.Broadcast();
+	BroadcastOnChangedInteractInfo();
 }
