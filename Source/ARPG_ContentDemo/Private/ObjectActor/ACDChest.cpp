@@ -3,6 +3,7 @@
 
 #include "ObjectActor/ACDChest.h"
 #include "Component/ACDInteractableComponent.h"
+#include "Net/UnrealNetwork.h"
 
 AACDChest::AACDChest()
 {
@@ -41,7 +42,21 @@ void AACDChest::DoInteract_Implementation(AActor* InstigatorActor)
 	}
 }
 
+void AACDChest::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AACDChest, bOpened);
+}
+
 void AACDChest::OnInteracted_Implementation(AActor* InstigatorActor)
 {
+	bOpened = !bOpened;
+	OnChangedChestStatus.Broadcast(bOpened);
+
 	UE_LOG(LogTemp, Log, TEXT("[%s] Chest opened"), ANSI_TO_TCHAR(__FUNCTION__));
+}
+
+void AACDChest::OnRep_Opened()
+{
+	OnChangedChestStatus.Broadcast(bOpened);
 }

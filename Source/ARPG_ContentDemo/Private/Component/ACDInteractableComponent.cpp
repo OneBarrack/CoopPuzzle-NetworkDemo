@@ -46,7 +46,7 @@ bool UACDInteractableComponent::DoInteract(AActor* InstigatorActor)
 
 FText UACDInteractableComponent::GetPromptText() const
 {
-	return FText::Format(FText::FromString(TEXT("{0} {1}")), FText::FromName(InteractName), InteractAction);;
+	return FText::Format(FText::FromString(TEXT("{0} {1}")), InteractAction, FText::FromName(InteractName));;
 }
 
 void UACDInteractableComponent::Multicast_BroadcastOnInteracted_Implementation(AActor* InstigatorActor)

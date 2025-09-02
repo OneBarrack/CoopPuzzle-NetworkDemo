@@ -29,16 +29,20 @@ protected:
 	// Interaction interface
 	virtual bool CanInteract_Implementation(AActor* InstigatorActor) const override;
 	virtual void DoInteract_Implementation(AActor* InstigatorActor) override;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnInteracted(AActor* InstigatorActor);
 	virtual void OnInteracted_Implementation(AActor* InstigatorActor);
 
+	UFUNCTION()
+	void OnRep_IsOn();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interact")
 	TObjectPtr<UACDInteractableComponent> InteractableComponent = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interact")
+	UPROPERTY(ReplicatedUsing = OnRep_IsOn, EditAnywhere, BlueprintReadWrite, Category="Interact")
 	bool bIsOn = false;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangedLeverStatus, bool, bIsOn);

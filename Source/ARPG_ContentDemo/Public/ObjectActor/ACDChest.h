@@ -30,12 +30,23 @@ protected:
 	// Interaction interface
 	virtual bool CanInteract_Implementation(AActor* InstigatorActor) const override;
 	virtual void DoInteract_Implementation(AActor* InstigatorActor) override;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnInteracted(AActor* InstigatorActor);
 	virtual void OnInteracted_Implementation(AActor* InstigatorActor);
 
+	UFUNCTION()
+	void OnRep_Opened();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interact")
 	TObjectPtr<UACDInteractableComponent> InteractableComponent = nullptr;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Opened, EditAnywhere, BlueprintReadWrite, Category="Interact")
+	bool bOpened = false;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangedChestStatus, bool, bOpened);
+	UPROPERTY(BlueprintAssignable)
+	FOnChangedChestStatus OnChangedChestStatus;
 };

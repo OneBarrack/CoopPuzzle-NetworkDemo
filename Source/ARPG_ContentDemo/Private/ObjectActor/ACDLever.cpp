@@ -3,6 +3,7 @@
 
 #include "ObjectActor/ACDLever.h"
 #include "Component/ACDInteractableComponent.h"
+#include "Net/UnrealNetwork.h"
 
 AACDLever::AACDLever()
 {
@@ -41,6 +42,12 @@ void AACDLever::DoInteract_Implementation(AActor* InstigatorActor)
 	}
 }
 
+void AACDLever::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AACDLever, bIsOn);
+}
+
 void AACDLever::OnInteracted_Implementation(AActor* InstigatorActor)
 {
 	bIsOn = !bIsOn;
@@ -49,3 +56,7 @@ void AACDLever::OnInteracted_Implementation(AActor* InstigatorActor)
 	UE_LOG(LogTemp, Log, TEXT("[%s] Lever was activated. (%s)"), ANSI_TO_TCHAR(__FUNCTION__), bIsOn ? TEXT("ON") : TEXT("OFF"));
 }
 
+void AACDLever::OnRep_IsOn()
+{
+	OnChangedLeverStatus.Broadcast(bIsOn);
+}

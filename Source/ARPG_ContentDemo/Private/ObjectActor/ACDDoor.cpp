@@ -3,6 +3,7 @@
 
 #include "ObjectActor/ACDDoor.h"
 #include "Component/ACDInteractableComponent.h"
+#include "Net/UnrealNetwork.h"
 
 AACDDoor::AACDDoor()
 {
@@ -41,10 +42,21 @@ void AACDDoor::DoInteract_Implementation(AActor* InstigatorActor)
 	}
 }
 
+void AACDDoor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AACDDoor, bOpened);
+}
+
 void AACDDoor::OnInteracted_Implementation(AActor* InstigatorActor)
 {
 	bOpened = !bOpened;
 	OnChangedDoorStatus.Broadcast(bOpened);
 
 	UE_LOG(LogTemp, Log, TEXT("[%s] Interacted with the door. (%s)"), ANSI_TO_TCHAR(__FUNCTION__), bOpened ? TEXT("Opened") : TEXT("Closed"));
+}
+
+void AACDDoor::OnRep_Opened()
+{
+	OnChangedDoorStatus.Broadcast(bOpened);
 }

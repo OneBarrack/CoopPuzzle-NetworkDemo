@@ -159,6 +159,9 @@ void UACDInteractionSensorComponent::UpdateInteractTarget()
 
 void UACDInteractionSensorComponent::ForceUpdate()
 {
+	if (!GetOwner() || !GetOwner()->HasAuthority()) 
+		return;
+
 	UpdateInteractTarget();
 }
 
@@ -186,11 +189,14 @@ AActor* UACDInteractionSensorComponent::PickBestInteractable() const
 				continue;
 			}
 
-			const float CurrentDistSq = FVector::DistSquared(OwnerLoc, CandidateActor->GetActorLocation());
-			if (CurrentDistSq < MinDistSq)
+			if (IACDInteractionInterface::Execute_CanInteract(CandidateActor, GetOwner()))
 			{
-				MinDistSq = CurrentDistSq;
-				BestActor = CandidateActor;
+				const float CurrentDistSq = FVector::DistSquared(OwnerLoc, CandidateActor->GetActorLocation());
+				if (CurrentDistSq < MinDistSq)
+				{
+					MinDistSq = CurrentDistSq;
+					BestActor = CandidateActor;
+				}
 			}
 		}
 	}
