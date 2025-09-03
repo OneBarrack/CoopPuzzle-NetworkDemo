@@ -8,7 +8,6 @@ Unreal Engine 5 기반 **멀티플레이 RPG 프로토타입 데모**
 - **목표**: RPG 필수 시스템(상호작용·UI·퍼즐 요소)에 Dedicated Server + 클라이언트 환경 적용
 - **개발 기간**: 2025.08.26 ~ 진행 중 (**9/3 기준**)  
 - **설계 키워드**: Server-authoritative, RepNotify 중심 동기화, Enhanced Input, Subsystem 모듈화
-- **핵심 루프**: 20–30초 시연 가능
 
 ---
 
@@ -31,7 +30,9 @@ Unreal Engine 5 기반 **멀티플레이 RPG 프로토타입 데모**
 ---
 
 ## 🕹️ 시연 루프 (데모 시나리오 — **골격 구현 기준**)
-
+<img src="https://github.com/user-attachments/assets/94497e1f-ed2f-4ed5-92f4-59647c7934f8" width="450" height="253"/>
+<img src="https://github.com/user-attachments/assets/cce18295-14cc-4a8c-a541-5480bf291ff7" width="450" height="253"/>
+  
 ### ✅ 현재 구현된 흐름
 1. **발판 + 큰 문 (Co-op 퍼즐)**  
    - A: 발판 밟음 → 큰 문 **임시 개방(BP-only)**  
