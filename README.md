@@ -30,8 +30,8 @@ Unreal Engine 5 기반 **멀티플레이 RPG 프로토타입 데모**
 ---
 
 ## 🕹️ 시연 루프 (데모 시나리오 — **골격 구현 기준**)
-<img src="https://github.com/user-attachments/assets/94497e1f-ed2f-4ed5-92f4-59647c7934f8" width="450" height="253"/>
-<img src="https://github.com/user-attachments/assets/cce18295-14cc-4a8c-a541-5480bf291ff7" width="450" height="253"/>
+<img src="https://github.com/user-attachments/assets/94497e1f-ed2f-4ed5-92f4-59647c7934f8" width="400" height="225"/>
+<img src="https://github.com/user-attachments/assets/cce18295-14cc-4a8c-a541-5480bf291ff7" width="400" height="225"/>
   
 ### ✅ 현재 구현된 흐름
 1. **발판 + 큰 문 (Co-op 퍼즐)**  
