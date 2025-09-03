@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,6 +7,7 @@
 #include "ACDDataRegistry.generated.h"
 
 /**
+ * (추후 확장 예정) 
  * - GameInstanceSubsystem 기반 데이터 접근 통로
  * - csv 파일을 통해 UDataTable 로드 및 캐싱
  */

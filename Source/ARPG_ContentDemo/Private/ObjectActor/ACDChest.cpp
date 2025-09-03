@@ -19,7 +19,7 @@ void AACDChest::BeginPlay()
 	
 	if (IsValid(InteractableComponent))
 	{
-		InteractableComponent->OnInteracted.AddDynamic(this, &AACDChest::OnInteracted);
+		InteractableComponent->OnInteracted.AddUniqueDynamic(this, &AACDChest::OnInteracted);
 	}
 }
 

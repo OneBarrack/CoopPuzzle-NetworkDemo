@@ -111,8 +111,8 @@ void UACDInteractionSensorComponent::OnRegister()
 
 		SensorSphere->RegisterComponent();
 
-		SensorSphere->OnComponentBeginOverlap.AddDynamic(this, &UACDInteractionSensorComponent::HandleOnBeginOverlap);
-		SensorSphere->OnComponentEndOverlap.AddDynamic(this, &UACDInteractionSensorComponent::HandleOnEndOverlap);
+		SensorSphere->OnComponentBeginOverlap.AddUniqueDynamic(this, &UACDInteractionSensorComponent::HandleOnBeginOverlap);
+		SensorSphere->OnComponentEndOverlap.AddUniqueDynamic(this, &UACDInteractionSensorComponent::HandleOnEndOverlap);
 	}
 }
 

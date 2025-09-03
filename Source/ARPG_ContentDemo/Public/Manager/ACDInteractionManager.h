@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,6 +7,7 @@
 #include "ACDInteractionManager.generated.h"
 
 /**
+ *  (추후 확장 예정) 
  * - WorldSubsystem 기반 상호작용 허브
  * - 레버/문/상자 등 Interactable 오브젝트들과 상호작용
  * - 이벤트 기반 트리거

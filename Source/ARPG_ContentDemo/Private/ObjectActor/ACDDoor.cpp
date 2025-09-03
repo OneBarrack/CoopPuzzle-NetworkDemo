@@ -19,7 +19,7 @@ void AACDDoor::BeginPlay()
 
 	if (IsValid(InteractableComponent))
 	{
-		InteractableComponent->OnInteracted.AddDynamic(this, &AACDDoor::OnInteracted);
+		InteractableComponent->OnInteracted.AddUniqueDynamic(this, &AACDDoor::OnInteracted);
 	}
 }
 

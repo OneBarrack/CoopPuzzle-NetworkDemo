@@ -19,7 +19,7 @@ void AACDLever::BeginPlay()
 	
 	if (IsValid(InteractableComponent))
 	{
-		InteractableComponent->OnInteracted.AddDynamic(this, &AACDLever::OnInteracted);
+		InteractableComponent->OnInteracted.AddUniqueDynamic(this, &AACDLever::OnInteracted);
 	}
 }
 

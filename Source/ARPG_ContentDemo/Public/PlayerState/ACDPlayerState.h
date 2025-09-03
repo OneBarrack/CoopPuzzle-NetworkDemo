@@ -7,7 +7,8 @@
 #include "ACDPlayerState.generated.h"
 
 /**
- * 
+ * (구현 중)
+ * 인벤토리 / 퀘스트 진행 반영
  */
 UCLASS()
 class ARPG_CONTENTDEMO_API AACDPlayerState : public APlayerState

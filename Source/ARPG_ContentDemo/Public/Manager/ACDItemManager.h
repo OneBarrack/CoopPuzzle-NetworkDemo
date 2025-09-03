@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,7 +7,8 @@
 #include "ACDItemManager.generated.h"
 
 /**
- * - GameInstanceSubsystem 기반 아이템 매니저
+ * (추후 확장 예정) 
+ * - GameInstanceSubsystem 기반 아이템 매니저 
  * - 인벤토리와 연동해 아이템 지급/소모 처리
  * - DataTable 기반 정의(Item.csv)
  */
