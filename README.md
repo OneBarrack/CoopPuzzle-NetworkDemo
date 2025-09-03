@@ -6,7 +6,7 @@ Unreal Engine 5 기반 **멀티플레이 RPG 프로토타입 데모**
 
 ## 📌 프로젝트 개요
 - **목표**: RPG 필수 시스템(상호작용·UI·퍼즐 요소)에 Dedicated Server + 클라이언트 환경 적용
-- **개발 기간**: 2025.08.25 ~ 진행 중 (**9/3 기준**)  
+- **개발 기간**: 2025.08.26 ~ 진행 중 (**9/3 기준**)  
 - **설계 키워드**: Server-authoritative, RepNotify 중심 동기화, Enhanced Input, Subsystem 모듈화
 - **핵심 루프**: 20–30초 시연 가능
 
