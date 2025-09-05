@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "ACDEnum.generated.h"
 
-/**
- * Enum 관리
- */
-
- // 더미용 enum (추후 enum 추가 시 제거)
-UENUM()
-enum class EDummyEnum : uint8
+// Reward
+UENUM(BlueprintType)
+enum class ERewardType : uint8
 {
-    None
+    None = 0,
+    Quest,
+    Chest,
+    ERewardType_Max UMETA(Hidden)
 };
+ENUM_RANGE_BY_COUNT(ERewardType, ERewardType::ERewardType_Max)
