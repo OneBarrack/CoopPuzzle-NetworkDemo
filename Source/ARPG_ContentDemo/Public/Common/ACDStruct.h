@@ -25,6 +25,24 @@ struct FACDItemRow : public FTableRowBase
     int32 MaxStack = 99;
 };
 
+// 보상용 Item 정보
+USTRUCT(BlueprintType)
+struct FACDRewardItem
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) 
+    int32 ItemID = 0;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) 
+    int32 Count  = 0;
+
+    bool IsValid() const 
+    { 
+        return ItemID > 0 && Count > 0; 
+    }
+};
+
 // 보상 Row
 USTRUCT(BlueprintType)
 struct FACDRewardRow : public FTableRowBase
@@ -34,7 +52,7 @@ struct FACDRewardRow : public FTableRowBase
     UPROPERTY(EditAnywhere, BlueprintReadOnly) 
     ERewardType Type = ERewardType::None;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly) 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
     TArray<FACDRewardItem> Items;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0")) 
