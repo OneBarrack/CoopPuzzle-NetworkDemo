@@ -16,28 +16,6 @@ void UACDInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty
     DOREPLIFETIME_CONDITION(UACDInventoryComponent, Inventory, COND_OwnerOnly);
 }
 
-void UACDInventoryComponent::Server_AddItem_Implementation(int32 ItemID, int32 Count)
-{
-    if (!GetOwner() || !GetOwner()->HasAuthority()) 
-        return;
-
-    if (Inventory.AddItem(ItemID, Count))
-    {
-        BroadcastUpdatedInventory();
-    }
-}
-
-void UACDInventoryComponent::Server_ConsumeItem_Implementation(int32 ItemID, int32 Count)
-{
-    if (!GetOwner() || !GetOwner()->HasAuthority()) 
-        return;
-
-    if (Inventory.RemoveItem(ItemID, Count))
-    {
-        BroadcastUpdatedInventory();
-    }
-}
-
 int32 UACDInventoryComponent::GetQuantity(int32 ItemID) const
 {
     for (const FACDInventoryItem& Item : Inventory.Items)
@@ -49,6 +27,38 @@ int32 UACDInventoryComponent::GetQuantity(int32 ItemID) const
     }
 
     return 0;
+}
+
+void UACDInventoryComponent::AddItem(int32 ItemID, int32 Count)
+{
+    if (!GetOwner() || !GetOwner()->HasAuthority())
+        return;
+
+    if (Inventory.AddItem(ItemID, Count))
+    {
+        BroadcastUpdatedInventory();
+    }
+}
+
+void UACDInventoryComponent::ConsumeItem(int32 ItemID, int32 Count)
+{
+    if (!GetOwner() || !GetOwner()->HasAuthority())
+        return;
+
+    if (Inventory.RemoveItem(ItemID, Count))
+    {
+        BroadcastUpdatedInventory();
+    }
+}
+
+void UACDInventoryComponent::Server_AddItem_Implementation(int32 ItemID, int32 Count)
+{
+    AddItem(ItemID, Count);
+}
+
+void UACDInventoryComponent::Server_ConsumeItem_Implementation(int32 ItemID, int32 Count)
+{
+    ConsumeItem(ItemID, Count);
 }
 
 void UACDInventoryComponent::BroadcastUpdatedInventory()

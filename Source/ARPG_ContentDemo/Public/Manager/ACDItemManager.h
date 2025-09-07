@@ -27,11 +27,11 @@ public:
 	
 	// Item table
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item")
-    UDataTable* ItemTable = nullptr;
+    TObjectPtr<UDataTable> ItemTable = nullptr;
 
     // Reward table
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Reward")
-    UDataTable* RewardTable = nullptr;
+    TObjectPtr<UDataTable> RewardTable = nullptr;
 
     // Item 및 Reward Row 조회 */
     bool GetItemRowByID(int32 ItemId, FACDItemRow& OutItemRow) const;

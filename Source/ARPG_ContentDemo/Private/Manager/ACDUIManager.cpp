@@ -2,22 +2,24 @@
 
 
 #include "Manager/ACDUIManager.h"
+#include "Settings/ACDGameDataSettings.h"
 #include "UI/HUD/ACDPlayerHUDWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerController.h"
 
 UACDUIManager::UACDUIManager()
 {
-    static ConstructorHelpers::FClassFinder<UACDPlayerHUDWidget> HudBPClass(TEXT("/Game/Blueprints/UI/WBP_PlayerHUD"));
-    if (HudBPClass.Succeeded())
-    {
-        MainHUDClass = HudBPClass.Class;
-    }
 }
 
-void UACDUIManager::Initialize(FSubsystemCollectionBase&) 
+void UACDUIManager::Initialize(FSubsystemCollectionBase& Collection)
 {
+    Super::Initialize(Collection);
 
+    const UACDGameDataSettings* Settings = GetDefault<UACDGameDataSettings>();
+    if (Settings && !Settings->PlayerHUDClass.IsNull())
+    {
+        MainHUDClass = Settings->PlayerHUDClass.LoadSynchronous();
+    }
 }
 
 void UACDUIManager::Deinitialize()

@@ -113,7 +113,7 @@ bool UACDItemManager::GrantReward(FName RowName, AACDPlayerState* ReceiverPS) co
         {
             if (RewardItem.ItemID > 0 && RewardItem.Count > 0)
             {
-                InventoryComponent->Server_AddItem(RewardItem.ItemID, RewardItem.Count); 
+                InventoryComponent->AddItem(RewardItem.ItemID, RewardItem.Count); 
                 ++GrantedItemCount;
             }
         }

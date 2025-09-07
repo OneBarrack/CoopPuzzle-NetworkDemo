@@ -21,6 +21,12 @@ public:
     UFUNCTION(BlueprintPure) 
     int32 GetQuantity(int32 ItemID) const;
 
+    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly) 
+    void AddItem(int32 ItemID, int32 Count);
+
+    UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+    void ConsumeItem(int32 ItemID, int32 Count);
+
     UFUNCTION(Server, Reliable) 
     void Server_AddItem(int32 ItemID, int32 Count);
     
