@@ -50,9 +50,6 @@ public:
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_BroadcastOnInteracted(AActor* InstigatorActor);
-	
 	UFUNCTION()
 	void BroadcastOnChangedInteractInfo();
 

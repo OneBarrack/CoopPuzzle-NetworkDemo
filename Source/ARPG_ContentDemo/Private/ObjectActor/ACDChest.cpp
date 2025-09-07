@@ -57,7 +57,7 @@ void AACDChest::OnInteracted_Implementation(AActor* InstigatorActor)
 	bOpened = !bOpened;
 	OnChangedChestStatus.Broadcast(bOpened);
 
-	if (!RewardPackRow.IsNone())
+	if (bOpened && !RewardPackRow.IsNone())
 	{
 		if (APawn* Pawn = Cast<APawn>(InstigatorActor))
 		{

@@ -35,7 +35,7 @@ bool UACDInteractableComponent::DoInteract(AActor* InstigatorActor)
 				--RemainingUseCount;
 			}
 
-			Multicast_BroadcastOnInteracted(InstigatorActor);
+			OnInteracted.Broadcast(InstigatorActor);
 
 			return true;
 		}
@@ -46,12 +46,7 @@ bool UACDInteractableComponent::DoInteract(AActor* InstigatorActor)
 
 FText UACDInteractableComponent::GetPromptText() const
 {
-	return FText::Format(FText::FromString(TEXT("{0} {1}")), InteractAction, FText::FromName(InteractName));;
-}
-
-void UACDInteractableComponent::Multicast_BroadcastOnInteracted_Implementation(AActor* InstigatorActor)
-{
-	OnInteracted.Broadcast(InstigatorActor);
+	return FText::Format(FText::FromString(TEXT("{0} {1}")), InteractAction, FText::FromName(InteractName));
 }
 
 void UACDInteractableComponent::BroadcastOnChangedInteractInfo()
