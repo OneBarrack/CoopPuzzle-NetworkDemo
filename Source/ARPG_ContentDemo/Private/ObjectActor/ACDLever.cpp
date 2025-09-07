@@ -50,10 +50,12 @@ void AACDLever::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 void AACDLever::OnInteracted_Implementation(AActor* InstigatorActor)
 {
+	if (!HasAuthority() || !IsValid(InstigatorActor)) return;
+
 	bIsOn = !bIsOn;
 	OnChangedLeverStatus.Broadcast(bIsOn);
 
-	UE_LOG(LogTemp, Log, TEXT("[%s] Lever was activated. (%s)"), ANSI_TO_TCHAR(__FUNCTION__), bIsOn ? TEXT("ON") : TEXT("OFF"));
+	UE_LOG(LogTemp, Log, TEXT("[%s] Interacted. Lever is %s"), ANSI_TO_TCHAR(__FUNCTION__), (bIsOn ? TEXT("on") : TEXT("off")));
 }
 
 void AACDLever::OnRep_IsOn()

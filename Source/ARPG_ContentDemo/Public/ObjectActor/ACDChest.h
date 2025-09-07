@@ -21,7 +21,6 @@ class ARPG_CONTENTDEMO_API AACDChest : public AActor, public IACDInteractionInte
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AACDChest();
 
 protected:
@@ -40,11 +39,14 @@ protected:
 	void OnRep_Opened();
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interact")
-	TObjectPtr<UACDInteractableComponent> InteractableComponent = nullptr;
+	UPROPERTY(EditAnywhere, Category="Reward")
+	FName RewardPackRow = NAME_None;
 
 	UPROPERTY(ReplicatedUsing = OnRep_Opened, EditAnywhere, BlueprintReadWrite, Category="Interact")
 	bool bOpened = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interact")
+	TObjectPtr<UACDInteractableComponent> InteractableComponent = nullptr;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangedChestStatus, bool, bOpened);
 	UPROPERTY(BlueprintAssignable)

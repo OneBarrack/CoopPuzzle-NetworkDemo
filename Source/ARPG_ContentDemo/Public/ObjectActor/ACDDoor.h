@@ -39,11 +39,11 @@ protected:
 	void OnRep_Opened();
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interact")
-	TObjectPtr<UACDInteractableComponent> InteractableComponent = nullptr;
-
 	UPROPERTY(ReplicatedUsing = OnRep_Opened, EditAnywhere, BlueprintReadWrite, Category="Interact")
 	bool bOpened = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interact")
+	TObjectPtr<UACDInteractableComponent> InteractableComponent = nullptr;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangedDoorStatus, bool, bOpened);
 	UPROPERTY(BlueprintAssignable)

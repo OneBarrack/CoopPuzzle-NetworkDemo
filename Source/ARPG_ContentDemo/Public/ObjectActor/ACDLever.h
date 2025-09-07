@@ -39,11 +39,11 @@ protected:
 	void OnRep_IsOn();
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interact")
-	TObjectPtr<UACDInteractableComponent> InteractableComponent = nullptr;
-
 	UPROPERTY(ReplicatedUsing = OnRep_IsOn, EditAnywhere, BlueprintReadWrite, Category="Interact")
 	bool bIsOn = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interact")
+	TObjectPtr<UACDInteractableComponent> InteractableComponent = nullptr;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangedLeverStatus, bool, bIsOn);
 	UPROPERTY(BlueprintAssignable)

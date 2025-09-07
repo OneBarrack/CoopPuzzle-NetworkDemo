@@ -50,10 +50,12 @@ void AACDDoor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 
 void AACDDoor::OnInteracted_Implementation(AActor* InstigatorActor)
 {
+	if (!HasAuthority() || !IsValid(InstigatorActor)) return;
+
 	bOpened = !bOpened;
 	OnChangedDoorStatus.Broadcast(bOpened);
 
-	UE_LOG(LogTemp, Log, TEXT("[%s] Interacted with the door. (%s)"), ANSI_TO_TCHAR(__FUNCTION__), bOpened ? TEXT("Opened") : TEXT("Closed"));
+	UE_LOG(LogTemp, Log, TEXT("[%s] Interacted. Door was (%s)"), ANSI_TO_TCHAR(__FUNCTION__), bOpened ? TEXT("opened") : TEXT("closed"));
 }
 
 void AACDDoor::OnRep_Opened()

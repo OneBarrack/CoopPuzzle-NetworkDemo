@@ -3,6 +3,8 @@
 
 #include "ObjectActor/ACDChest.h"
 #include "Component/ACDInteractableComponent.h"
+#include "PlayerState/ACDPlayerState.h"
+#include "Manager/ACDItemManager.h"
 #include "Net/UnrealNetwork.h"
 
 AACDChest::AACDChest()
@@ -50,10 +52,29 @@ void AACDChest::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 void AACDChest::OnInteracted_Implementation(AActor* InstigatorActor)
 {
+	if (!HasAuthority() || !IsValid(InstigatorActor)) return;
+
 	bOpened = !bOpened;
 	OnChangedChestStatus.Broadcast(bOpened);
 
-	UE_LOG(LogTemp, Log, TEXT("[%s] Chest opened"), ANSI_TO_TCHAR(__FUNCTION__));
+	if (!RewardPackRow.IsNone())
+	{
+		if (APawn* Pawn = Cast<APawn>(InstigatorActor))
+		{
+			if (AACDPlayerState* PlayerState = Pawn->GetPlayerState<AACDPlayerState>())
+			{
+				if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
+				{
+					if (UACDItemManager* ItemManager = GameInstance->GetSubsystem<UACDItemManager>())
+					{
+						ItemManager->GrantReward(RewardPackRow, PlayerState);
+					}
+				}
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[%s] Interacted. Chest was %s"), ANSI_TO_TCHAR(__FUNCTION__), (bOpened ? TEXT("opened") : TEXT("closed")));
 }
 
 void AACDChest::OnRep_Opened()
