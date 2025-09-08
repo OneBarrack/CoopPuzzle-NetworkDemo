@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interface/ACDInteractionInterface.h"
+#include "Common/ACDStruct.h"
 #include "ACDDoor.generated.h"
 
 class UACDInteractableComponent;
@@ -31,6 +32,9 @@ protected:
 	virtual void DoInteract_Implementation(AActor* InstigatorActor) override;
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	bool HasEnoughItemsForUnlocked(AActor* InstigatorActor) const;
+	bool ConsumeItemsForUnlocked(AActor* InstigatorActor) const;
+
 	UFUNCTION(BlueprintNativeEvent)
 	void OnInteracted(AActor* InstigatorActor);
 	virtual void OnInteracted_Implementation(AActor* InstigatorActor);
@@ -38,14 +42,23 @@ protected:
 	UFUNCTION()
 	void OnRep_Opened();
 
+	UFUNCTION()
+	void OnRep_IsLocked();
+
 public:
 	UPROPERTY(ReplicatedUsing = OnRep_Opened, EditAnywhere, BlueprintReadWrite, Category="Interact")
 	bool bOpened = false;
 
+	UPROPERTY(ReplicatedUsing = OnRep_IsLocked, EditAnywhere, BlueprintReadWrite, Category="Interact|Lock")
+	bool bIsLocked = false;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category="Interact|Lock")
+	FACDRewardItem KeyItemInfo;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interact")
 	TObjectPtr<UACDInteractableComponent> InteractableComponent = nullptr;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangedDoorStatus, bool, bOpened);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnChangedDoorStatus, bool, bOpened, bool, bIsLocked);
 	UPROPERTY(BlueprintAssignable)
 	FOnChangedDoorStatus OnChangedDoorStatus;
 };

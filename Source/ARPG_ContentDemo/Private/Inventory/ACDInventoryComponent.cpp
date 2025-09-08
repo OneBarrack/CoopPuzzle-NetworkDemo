@@ -18,7 +18,7 @@ void UACDInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty
 
 int32 UACDInventoryComponent::GetQuantity(int32 ItemID) const
 {
-    for (const FACDInventoryItem& Item : Inventory.Items)
+    for (const FACDInventoryItem& Item : Inventory.GetItems())
     {
         if (Item.ItemID == ItemID)
         {
@@ -63,7 +63,7 @@ void UACDInventoryComponent::Server_ConsumeItem_Implementation(int32 ItemID, int
 
 void UACDInventoryComponent::BroadcastUpdatedInventory()
 {
-    OnInventoryUpdated.Broadcast(Inventory.Items);
+    OnInventoryUpdated.Broadcast(Inventory.GetItems());
 }
 
 void UACDInventoryComponent::OnRep_Inventory()

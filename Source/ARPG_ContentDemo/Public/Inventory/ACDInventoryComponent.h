@@ -8,7 +8,7 @@
 #include "ACDInventoryComponent.generated.h"
 
 /** 
-* 플레이어별 인벤토리(서버 권위, OwnerOnly 복제) 
+* 플레이어별 인벤토리
 */
 UCLASS(ClassGroup=(ACD), meta=(BlueprintSpawnableComponent))
 class ARPG_CONTENTDEMO_API UACDInventoryComponent : public UActorComponent
@@ -18,7 +18,7 @@ class ARPG_CONTENTDEMO_API UACDInventoryComponent : public UActorComponent
 public:
     UACDInventoryComponent();
 
-    UFUNCTION(BlueprintPure) 
+    UFUNCTION(BlueprintPure)
     int32 GetQuantity(int32 ItemID) const;
 
     UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly) 
@@ -32,6 +32,8 @@ public:
     
     UFUNCTION(Server, Reliable) 
     void Server_ConsumeItem(int32 ItemID, int32 Count);
+
+    const FACDInventoryList& GetInventory() const { return Inventory; };
 
 protected:
     void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

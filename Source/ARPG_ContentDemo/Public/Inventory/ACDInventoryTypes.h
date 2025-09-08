@@ -33,8 +33,9 @@ public:
     int32 FindIndex(int32 ItemID) const;
     bool AddItem(int32 ItemID, int32 ItemCount);
     bool RemoveItem(int32 ItemID, int32 ItemCount);
+    const TArray<FACDInventoryItem>& GetItems() const { return Items; };
 
-public:
+private:
     UPROPERTY() 
     TArray<FACDInventoryItem> Items;
 };
