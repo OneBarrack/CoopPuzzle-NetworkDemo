@@ -3,7 +3,7 @@
 
 #include "Manager/ACDUIManager.h"
 #include "Settings/ACDGameDataSettings.h"
-#include "UI/HUD/ACDPlayerHUDWidget.h"
+#include "UI/ACDPlayerHUDWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerController.h"
 
@@ -82,5 +82,11 @@ void UACDUIManager::SetInteractionPrompt(const FText& PromptText, bool bIsVisibl
 {
     EnsureMainHUDCreated();
     MainHUD->SetInteractionPrompt(PromptText, bIsVisible);
+}
+
+void UACDUIManager::OpenInventory()
+{
+    EnsureMainHUDCreated();
+    MainHUD->OpenInventory();
 }
 

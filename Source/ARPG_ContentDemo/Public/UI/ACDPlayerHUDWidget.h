@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "ACDPlayerHUDWidget.generated.h"
 
+struct FACDInventoryItem;
+
 /** 메인 오버레이 HUD 위젯 (연출/레이아웃은 BP에서 구현) */
 UCLASS()
 class ARPG_CONTENTDEMO_API UACDPlayerHUDWidget : public UUserWidget
@@ -25,6 +27,13 @@ public:
     UFUNCTION(BlueprintCallable, Category="HUD")
     void SetInteractionPrompt(const FText& PromptText, bool bIsVisible);    
 
+    // 인벤토리UI 업데이트
+    UFUNCTION(BlueprintCallable, Category="HUD")
+    void OpenInventory();
+
+    UFUNCTION(BlueprintCallable, Category="HUD")
+    void UpdateInventoryUI(const TArray<FACDInventoryItem>& Items);
+
     // BP가 구현하는 이벤트 (C++은 시그니처만 보장)
     UFUNCTION(BlueprintImplementableEvent, Category="HUD")
     void BP_OnShowToastMessage(const FText& Message, float DisplaySeconds);
@@ -34,4 +43,10 @@ public:
 
     UFUNCTION(BlueprintImplementableEvent, Category="HUD")
     void BP_OnSetInteractionPrompt(const FText& PromptText, bool bIsVisible);
+
+    UFUNCTION(BlueprintImplementableEvent, Category="HUD")
+    void BP_OpenInventory();
+
+    UFUNCTION(BlueprintImplementableEvent, Category="HUD")
+    void BP_OnUpdateInventoryUI(const TArray<FACDInventoryItem>& Items);
 };

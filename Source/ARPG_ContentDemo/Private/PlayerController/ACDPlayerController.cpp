@@ -17,6 +17,7 @@ void AACDPlayerController::BeginPlay()
     Super::BeginPlay();
 
     AddContext(GameplayContext, 0);
+    AddContext(UIContext, 0);
     BindInventory();
     BindToPawnSensor(GetPawn());
 }
@@ -27,22 +28,31 @@ void AACDPlayerController::SetupInputComponent()
 
     if (auto* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent))
     {
-        if (ToggleUIAction)
-        {
+        if (IsValid(ToggleUIAction))
+        {            
             EnhancedInput->BindAction(ToggleUIAction, ETriggerEvent::Started, this, &AACDPlayerController::ToggleUIMode);
+        }
+
+        if (IsValid(OpenInventoryAction))
+        {
+            EnhancedInput->BindAction(OpenInventoryAction, ETriggerEvent::Started, this, &AACDPlayerController::OpenInventory);
         }
     }
 }
 
 void AACDPlayerController::OnPossess(APawn* InPawn)
 {
+    UnBindInventory();
+
     Super::OnPossess(InPawn);    
     BindToPawnSensor(InPawn);
+    BindInventory();
 }
 
 void AACDPlayerController::OnUnPossess()
 {
     BindToPawnSensor(nullptr);
+    UnBindInventory();
     RemoveContext(UIContext);
     
     Super::OnUnPossess();
@@ -85,13 +95,27 @@ void AACDPlayerController::BindToPawnSensor(APawn* NewPawn)
 
 void AACDPlayerController::BindInventory()
 {
-    if (APawn* ColtrolledPawn = GetPawn())
+    if (APawn* ControlledPawn = GetPawn())
     {
-        if (AACDPlayerState* PS = ColtrolledPawn->GetPlayerState<AACDPlayerState>())
+        if (AACDPlayerState* PS = ControlledPawn->GetPlayerState<AACDPlayerState>())
         {
             if (UACDInventoryComponent* InventoryComponent = PS->FindComponentByClass<UACDInventoryComponent>())
             {
                 InventoryComponent->OnInventoryUpdated.AddUniqueDynamic(this, &AACDPlayerController::HandleOnInventoryUpdated);
+            }
+        }
+    }
+}
+
+void AACDPlayerController::UnBindInventory()
+{
+    if (APawn* ControlledPawn = GetPawn())
+    {
+        if (AACDPlayerState* PS = ControlledPawn->GetPlayerState<AACDPlayerState>())
+        {
+            if (UACDInventoryComponent* InventoryComponent = PS->FindComponentByClass<UACDInventoryComponent>())
+            {
+                InventoryComponent->OnInventoryUpdated.RemoveDynamic(this, &AACDPlayerController::HandleOnInventoryUpdated);
             }
         }
     }
@@ -154,9 +178,23 @@ void AACDPlayerController::HandleOnInventoryUpdated(const TArray<FACDInventoryIt
     {
         if (UACDUIManager* UIManager = LP->GetSubsystem<UACDUIManager>())
         {
-            if (UACDPlayerHUDWidget* PlayerHUD = UIManager->GetHUD()) // 함수 추가 필요
+            if (UACDPlayerHUDWidget* PlayerHUD = UIManager->GetHUD())
             {
                 PlayerHUD->UpdateInventoryUI(Items);
+            }
+        }
+    }
+}
+
+void AACDPlayerController::OpenInventory()
+{
+    if (ULocalPlayer* LP = GetLocalPlayer())
+    {
+        if (UACDUIManager* UIManager = LP->GetSubsystem<UACDUIManager>())
+        {
+            if (UACDPlayerHUDWidget* PlayerHUD = UIManager->GetHUD())
+            {
+                PlayerHUD->OpenInventory();
             }
         }
     }

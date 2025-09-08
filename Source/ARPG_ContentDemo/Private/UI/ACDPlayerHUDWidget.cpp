@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/HUD/ACDPlayerHUDWidget.h"
+#include "UI/ACDPlayerHUDWidget.h"
 
 void UACDPlayerHUDWidget::ShowToastMessage(const FText& Message, float DisplaySeconds /*= 1.2f*/)
 {
@@ -16,5 +16,15 @@ void UACDPlayerHUDWidget::UpdateQuestProgress(const FText& Title, int32 CurrentC
 void UACDPlayerHUDWidget::SetInteractionPrompt(const FText& PromptText, bool bIsVisible)
 {
 	BP_OnSetInteractionPrompt(PromptText, bIsVisible);
+}
+
+void UACDPlayerHUDWidget::OpenInventory()
+{
+	BP_OpenInventory();
+}
+
+void UACDPlayerHUDWidget::UpdateInventoryUI(const TArray<FACDInventoryItem>& Items)
+{
+	BP_OnUpdateInventoryUI(Items);
 }
 

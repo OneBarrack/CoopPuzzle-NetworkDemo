@@ -22,7 +22,10 @@ public:
     virtual void Deinitialize() override;
     virtual void PlayerControllerChanged(APlayerController* NewController) override;
 
-    // 외부 공개 API (게임 로직은 이 함수들만 호출)
+public:
+    UFUNCTION(BlueprintCallable, Category="UI")
+    UACDPlayerHUDWidget* GetHUD() const { return MainHUD; }
+        
     UFUNCTION(BlueprintCallable, Category="UI")
     void EnsureMainHUDCreated();
 
@@ -34,6 +37,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Category="UI")
     void SetInteractionPrompt(const FText& PromptText, bool bIsVisible);
+
+    UFUNCTION(BlueprintCallable, Category="UI")
+    void OpenInventory();
 
 private:
     // 메인 HUD 위젯 클래스(WBP 부모) 지정

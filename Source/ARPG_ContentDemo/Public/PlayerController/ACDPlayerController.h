@@ -44,10 +44,16 @@ private:
     void BindInventory();
 
     UFUNCTION()
+    void UnBindInventory();
+
+    UFUNCTION()
     void UpdateInteractionTargetUIInfo();
 
     UFUNCTION()
     void HandleOnInventoryUpdated(const TArray<FACDInventoryItem>& Items);
+
+    UFUNCTION()
+    void OpenInventory();
 
     UEnhancedInputLocalPlayerSubsystem* GetInputSubsystem() const;
     void AddContext(UInputMappingContext* Context, int32 Priority) const;
@@ -68,6 +74,9 @@ public:
     // UI 액션
     UPROPERTY(EditDefaultsOnly, Category="Input")
     TObjectPtr<UInputAction> ToggleUIAction;
+
+    UPROPERTY(EditDefaultsOnly, Category="Input")
+    TObjectPtr<UInputAction> OpenInventoryAction;
 
 private:
     // 캐릭터의 상호작용 센서 캐시
