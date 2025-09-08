@@ -95,28 +95,22 @@ void AACDPlayerController::BindToPawnSensor(APawn* NewPawn)
 
 void AACDPlayerController::BindInventory()
 {
-    if (APawn* ControlledPawn = GetPawn())
+    if (AACDPlayerState* PS = GetPlayerState<AACDPlayerState>())
     {
-        if (AACDPlayerState* PS = ControlledPawn->GetPlayerState<AACDPlayerState>())
+        if (UACDInventoryComponent* InventoryComponent = PS->FindComponentByClass<UACDInventoryComponent>())
         {
-            if (UACDInventoryComponent* InventoryComponent = PS->FindComponentByClass<UACDInventoryComponent>())
-            {
-                InventoryComponent->OnInventoryUpdated.AddUniqueDynamic(this, &AACDPlayerController::HandleOnInventoryUpdated);
-            }
+            InventoryComponent->OnInventoryUpdated.AddUniqueDynamic(this, &AACDPlayerController::HandleOnInventoryUpdated);
         }
     }
 }
 
 void AACDPlayerController::UnBindInventory()
 {
-    if (APawn* ControlledPawn = GetPawn())
+    if (AACDPlayerState* PS = GetPlayerState<AACDPlayerState>())
     {
-        if (AACDPlayerState* PS = ControlledPawn->GetPlayerState<AACDPlayerState>())
+        if (UACDInventoryComponent* InventoryComponent = PS->FindComponentByClass<UACDInventoryComponent>())
         {
-            if (UACDInventoryComponent* InventoryComponent = PS->FindComponentByClass<UACDInventoryComponent>())
-            {
-                InventoryComponent->OnInventoryUpdated.RemoveDynamic(this, &AACDPlayerController::HandleOnInventoryUpdated);
-            }
+            InventoryComponent->OnInventoryUpdated.RemoveDynamic(this, &AACDPlayerController::HandleOnInventoryUpdated);
         }
     }
 }
@@ -223,6 +217,13 @@ void AACDPlayerController::ToggleUIMode()
 
         bShowMouseCursor = false;
     }
+}
+
+void AACDPlayerController::OnRep_PlayerState()
+{
+    Super::OnRep_PlayerState();
+
+    BindInventory();
 }
 
 // 상호작용 타겟 변경 및 타겟 상태 변화 델리게이트에 연결

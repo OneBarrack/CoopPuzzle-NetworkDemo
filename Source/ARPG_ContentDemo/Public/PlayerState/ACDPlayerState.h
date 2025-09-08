@@ -20,6 +20,9 @@ class ARPG_CONTENTDEMO_API AACDPlayerState : public APlayerState
 public:
     AACDPlayerState();
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory")
+    virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
+public:
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category="Inventory")
     TObjectPtr<UACDInventoryComponent> InventoryComponent;
 };

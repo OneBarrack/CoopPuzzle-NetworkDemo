@@ -27,6 +27,7 @@ class ARPG_CONTENTDEMO_API AACDPlayerController : public APlayerController
 	
 protected:
     virtual void BeginPlay() override;
+    virtual void OnRep_PlayerState() override;
     virtual void SetupInputComponent() override;
     virtual void OnPossess(APawn* InPawn) override;
     virtual void OnUnPossess() override;
@@ -35,7 +36,7 @@ public:
     UFUNCTION(BlueprintNativeEvent)
     void OnInteractionTargetChanged(AActor* NewTarget);
     virtual void OnInteractionTargetChanged_Implementation(AActor* NewTarget);
-
+    
 private:
     UFUNCTION()
     void BindToPawnSensor(APawn* NewPawn);
