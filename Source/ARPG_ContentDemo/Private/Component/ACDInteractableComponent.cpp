@@ -46,6 +46,7 @@ bool UACDInteractableComponent::DoInteract(AActor* InstigatorActor)
 
 FText UACDInteractableComponent::GetPromptText() const
 {
+	// 액션 + 대상명. ex("Open Door")
 	return FText::Format(FText::FromString(TEXT("{0} {1}")), InteractAction, FText::FromName(InteractName));
 }
 

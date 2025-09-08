@@ -50,6 +50,7 @@ APlayerController* UACDUIManager::GetPlayerController() const
     return CachedPlayerController.Get();
 }
 
+// HUD 보장
 void UACDUIManager::EnsureMainHUDCreated()
 {
     if (IsValid(MainHUD) || !IsValid(MainHUDClass)) return;
@@ -57,7 +58,7 @@ void UACDUIManager::EnsureMainHUDCreated()
     if (APlayerController* PC = CachedPlayerController.Get())
     {
         MainHUD = CreateWidget<UACDPlayerHUDWidget>(PC, MainHUDClass);
-        if (MainHUD)
+        if (IsValid(MainHUD))
         {
             MainHUD->AddToPlayerScreen(/*ZOrder*/0);
             MainHUD->SetVisibility(ESlateVisibility::HitTestInvisible);
@@ -67,7 +68,7 @@ void UACDUIManager::EnsureMainHUDCreated()
 }
 
 void UACDUIManager::ShowToastMessage(const FText& Message, float DisplaySeconds)
-{
+{    
     EnsureMainHUDCreated();
     MainHUD->ShowToastMessage(Message, DisplaySeconds);
 }

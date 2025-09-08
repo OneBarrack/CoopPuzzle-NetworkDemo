@@ -26,7 +26,7 @@ void AACDPlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
 
-    if (auto* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent))
+    if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent))
     {
         if (IsValid(ToggleUIAction))
         {            

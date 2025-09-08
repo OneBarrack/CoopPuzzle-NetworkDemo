@@ -5,6 +5,8 @@
 #include "Component/ACDInteractableComponent.h"
 #include "Net/UnrealNetwork.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogACDLever, Log, All);
+
 AACDLever::AACDLever()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -55,7 +57,7 @@ void AACDLever::OnInteracted_Implementation(AActor* InstigatorActor)
 	bIsOn = !bIsOn;
 	OnChangedLeverStatus.Broadcast(bIsOn);
 
-	UE_LOG(LogTemp, Log, TEXT("[%s] Interacted. Lever is %s"), ANSI_TO_TCHAR(__FUNCTION__), (bIsOn ? TEXT("on") : TEXT("off")));
+	UE_LOG(LogACDLever, Log, TEXT("[%s] Interacted. Lever is %s"), ANSI_TO_TCHAR(__FUNCTION__), (bIsOn ? TEXT("on") : TEXT("off")));
 }
 
 void AACDLever::OnRep_IsOn()

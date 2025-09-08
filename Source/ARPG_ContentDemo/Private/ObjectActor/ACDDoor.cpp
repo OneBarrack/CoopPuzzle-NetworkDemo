@@ -7,6 +7,8 @@
 #include "Inventory/ACDInventoryComponent.h"
 #include "Net/UnrealNetwork.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogACDDoor, Log, All);
+
 AACDDoor::AACDDoor()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -67,7 +69,7 @@ bool AACDDoor::ConsumeItemsForUnlocked(AActor* InstigatorActor) const
 				{
 					InventoryComponent->ConsumeItem(KeyItemInfo.ItemID, KeyItemInfo.Count);
 
-					UE_LOG(LogTemp, Log, TEXT("[%s] Consumed items for unlocked itemId(%d) Count(%d)"), ANSI_TO_TCHAR(__FUNCTION__), KeyItemInfo.ItemID, KeyItemInfo.Count);
+					UE_LOG(LogACDDoor, Log, TEXT("[%s] Consumed items for unlocked itemId(%d) Count(%d)"), ANSI_TO_TCHAR(__FUNCTION__), KeyItemInfo.ItemID, KeyItemInfo.Count);
 
 					return true;
 				}
@@ -118,7 +120,7 @@ void AACDDoor::OnInteracted_Implementation(AActor* InstigatorActor)
 	bOpened = !bOpened;
 	OnChangedDoorStatus.Broadcast(bOpened, bIsLocked);
 
-	UE_LOG(LogTemp, Log, TEXT("[%s] Interacted. Door was (%s)"), ANSI_TO_TCHAR(__FUNCTION__), bOpened ? TEXT("opened") : TEXT("closed"));
+	UE_LOG(LogACDDoor, Log, TEXT("[%s] Interacted. Door was (%s)"), ANSI_TO_TCHAR(__FUNCTION__), bOpened ? TEXT("opened") : TEXT("closed"));
 }
 
 void AACDDoor::OnRep_Opened()

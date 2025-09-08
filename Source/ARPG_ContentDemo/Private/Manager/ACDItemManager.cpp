@@ -27,7 +27,7 @@ void UACDItemManager::Initialize(FSubsystemCollectionBase& Collection)
     // Item cache
     ItemRowMap.Reset();
 
-    if (ItemTable)
+    if (IsValid(ItemTable))
     {
         const TArray<FName> RowNames = ItemTable->GetRowNames();
         ItemRowMap.Reserve(RowNames.Num()); // 미리 캐시 사이즈 확보
@@ -59,7 +59,7 @@ void UACDItemManager::Initialize(FSubsystemCollectionBase& Collection)
     }
 
     // Reward
-    if (RewardTable)
+    if (IsValid(RewardTable))
     {
         UE_LOG(LogACDItemManager, Log, TEXT("[%s] RewardTable ready. Rows(%d)"), ANSI_TO_TCHAR(__FUNCTION__), RewardTable->GetRowNames().Num());
     }

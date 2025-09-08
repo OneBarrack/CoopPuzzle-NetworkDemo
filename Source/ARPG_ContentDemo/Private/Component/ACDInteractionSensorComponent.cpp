@@ -8,6 +8,8 @@
 #include "TimerManager.h"
 #include "Net/UnrealNetwork.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogACDInteractionSensor, Log, All);
+
 UACDInteractionSensorComponent::UACDInteractionSensorComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -215,5 +217,5 @@ void UACDInteractionSensorComponent::SetCurrentTarget(AActor* NewTargetActor)
 	CurrentTargetActor = NewTargetActor;
 
 	const FString TargetActorName = IsValid(CurrentTargetActor) ? *CurrentTargetActor->GetName() : FString(TEXT(""));
-	UE_LOG(LogTemp, Log, TEXT("[%s] Changed current target : [%s]"), ANSI_TO_TCHAR(__FUNCTION__), *TargetActorName);
+	UE_LOG(LogACDInteractionSensor, Log, TEXT("[%s] Changed current target : [%s]"), ANSI_TO_TCHAR(__FUNCTION__), *TargetActorName);
 }

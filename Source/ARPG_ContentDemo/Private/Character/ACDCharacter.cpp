@@ -22,9 +22,9 @@ void AACDCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-    if (auto* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+    if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
     {
-        if (InteractAction)
+        if (IsValid(InteractAction))
         {
             EnhancedInput->BindAction(InteractAction, ETriggerEvent::Started, this, &AACDCharacter::Interact);
         }

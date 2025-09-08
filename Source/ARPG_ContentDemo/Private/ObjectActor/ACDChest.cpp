@@ -7,6 +7,8 @@
 #include "Manager/ACDItemManager.h"
 #include "Net/UnrealNetwork.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogACDChest, Log, All);
+
 AACDChest::AACDChest()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -74,7 +76,7 @@ void AACDChest::OnInteracted_Implementation(AActor* InstigatorActor)
 		}
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("[%s] Interacted. Chest was %s"), ANSI_TO_TCHAR(__FUNCTION__), (bOpened ? TEXT("opened") : TEXT("closed")));
+	UE_LOG(LogACDChest, Log, TEXT("[%s] Interacted. Chest was %s"), ANSI_TO_TCHAR(__FUNCTION__), (bOpened ? TEXT("opened") : TEXT("closed")));
 }
 
 void AACDChest::OnRep_Opened()
