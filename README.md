@@ -40,6 +40,8 @@ Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프�
 - 상자 보상 획득 → 인벤토리 UI 반영   
 - Key Door 해금 → Key 소비 후 자유 출입  
 
+▶️ [데모 플레이 영상 (YouTube, 45초)](https://youtu.be/zNMQqJn7SSA)
+
 ---
 
 ## 🛠️ 시스템 구조
