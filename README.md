@@ -1,128 +1,108 @@
-# 🎮 ARPG_ContentDemo
-Unreal Engine 5 기반 **멀티플레이 RPG 프로토타입 데모**  
-(Interaction / UI / Network Replication / Co-op Puzzle)
+# 🎮 Co-op Puzzle & Network Demo
+Unreal Engine 5 / Dedicated Server 기반 **멀티플레이 시스템 데모**  
 
 ---
+
+Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프를  
+**MVP(Proof-of-Concept) 방식으로 짧고 명확하게 구현한 멀티플레이 예시 데모**입니다.  
+상용 수준의 모든 기능을 담기보다는, 핵심 구조를 작지만 완결된 사이클로 검증하는 데 집중했습니다.
 
 ## 📌 프로젝트 개요
-- **목표**: RPG 필수 시스템(상호작용·UI·퍼즐 요소)에 Dedicated Server + 클라이언트 환경 적용
-- **개발 기간**: 2025.08.26 ~ 진행 중 (**9/3 기준**)  
-- **설계 키워드**: Server-authoritative, RepNotify 중심 동기화, Enhanced Input, Subsystem 모듈화
+- **목적**: 짧고 완결된 루프(MVP)를 통해 최신 UE5 네트워크 및 시스템 아키텍처를 **실험·검증**
+- **개발 기간**: 2025.08.26 ~ 2025.09.09 (MVP 구현)
+- **포커스**: Interaction, Replication, Inventory, Subsystem, UI 연동  
+- **의도**: 실무 경험을 확장하고, 최신 엔진 기능을 직접 적용해본 예시 프로젝트
 
 ---
 
-## ✅ 현재 구현 범위
+## ✅ 구현 범위
 - **Interaction 시스템**  
-  센서(`UACDInteractionSensorComponent`) / 인터페이스(`IACDInteractionInterface`) / **인터랙터블**(`UACDInteractableComponent`)
+  `UACDInteractionSensorComponent` (Sensor) / `IACDInteractionInterface` (Interface) / `UACDInteractableComponent` (Interactable)
 - **상호작용 액터**  
-  문(`AACDDoor`), 레버(`AACDLever`), 상자(`AACDChest`)
+  `AACDDoor` (문), `AACDLever` (레버), `AACDChest` (상자)
 - **퍼즐 요소**  
-  - **BP-only**: 발판 + 큰 문(임시 개방, 시작 시점 RepNotify + 타임라인 동기 실행)
-  - **C++ 액터**: 레버(영구 개방 트리거), 작은 문(열기/닫기 토글)
+  - **BP-only**: 발판 + 유리벽 + 큰 문 (RepNotify + Timeline 동기 실행)
+  - **C++ 액터**: 레버(영구 개방), 작은 문(Key Door, 토글식)
 - **UI**  
-  HUD 생성 및 **상호작용 프롬프트** 표시
+  HUD 생성 / 상호작용 프롬프트 / 인벤토리 위젯(Key 획득/소모 반영)
 - **Subsystem**  
-  DataRegistry / QuestManager / ItemManager / InteractionManager / UIManager  
-  *(현재는 초기화·HUD 보장·로그 중심, 추후 확장 예정)*
+  ItemManager(보상 지급), UIManager(HUD 보장 생성, Prompt/Toast 전달), QuestManager(확장 뼈대)
 - **PlayerState**  
-  구조만 마련 *(향후 퀘스트/인벤토리 진행도 저장)*
+  인벤토리 진행도 저장 및 복제 (OwnerOnly)
 
 ---
 
-## 🕹️ 시연 루프 (데모 시나리오 — **골격 구현 기준**)
-<img src="https://github.com/user-attachments/assets/94497e1f-ed2f-4ed5-92f4-59647c7934f8" width="400" height="225"/>
-<img src="https://github.com/user-attachments/assets/cce18295-14cc-4a8c-a541-5480bf291ff7" width="400" height="225"/>
-  
-### ✅ 현재 구현된 흐름
-1. **발판 + 큰 문 (Co-op 퍼즐)**  
-   - A: 발판 밟음 → 큰 문 **임시 개방(BP-only)**  
-   - B: 문 통과 후 **레버(C++)** 작동 → 문 **영구 개방(발판 무시)**
-2. **레버 상호작용(C++)**  
-   - 상태 토글 + 델리게이트 브로드캐스트
-3. **상자 상호작용(C++)**  
-   - 현재 **“열기” 상호작용만 구현** *(보상 지급/인벤토리 반영 없음)*
-4. **UI 표시**  
-   - HUD 생성, **프롬프트** 정상 동작
+## 🕹️ 게임 플레이 루프 (데모 시나리오 — **골격 구현 기준**)
+<img src="https://github.com/user-attachments/assets/8278e243-0fda-46b0-8bd8-b43a6aee2010" width="400" height="225"/>
+<img src="https://github.com/user-attachments/assets/f0a8e4c6-c869-45f5-9b07-642d714238a5" width="400" height="225"/>  
 
-### 🔜 예정된 확장
-- **NPC 대화 → 퀘스트 수락**: 현재는 로그/프롬프트 대체, QuestManager 연동
-- **퀘스트 진행/완료 처리**: 카운트·완료 UI, PlayerState 연계 저장
-- **상자 보상 획득**: 아이템 지급 → 인벤토리 UI 반영
-- **토스트 메시지 시스템**: 진행/완료/보상 이벤트 시각화
+- 발판 + 레버 → 큰 문 협동 퍼즐   
+- 상자 보상 획득 → 인벤토리 UI 반영   
+- Key Door 해금 → Key 소비 후 자유 출입  
 
 ---
 
 ## 🛠️ 시스템 구조
 
 ### Interaction
-- `UACDInteractionSensorComponent`: 서버에서 후보 탐색·주기 평가, `CurrentTargetActor` **OwnerOnly 복제**, `ForceUpdate` 지원  
-- `UACDInteractableComponent`: `Prompt/Action/RemainingUseCount` RepNotify, `OnInteracted`/`OnChangedInteractInfo` 델리게이트  
-- `IACDInteractionInterface`: `CanInteract` / `DoInteract` 계약  
-- **상호작용 액터 (Door / Lever / Chest)**: C++로 **상태 관리**, **연출은 BP**에서 구현
+- `UACDInteractionSensorComponent`: 서버에서 후보 탐색 및 주기 평가, `CurrentTargetActor` OwnerOnly 복제, `ForceUpdate` 지원
+- `UACDInteractableComponent`: `Prompt/Action/RemainingUseCount` RepNotify, `OnInteracted`/`OnChangedInteractInfo` 델리게이트 제공
+- `IACDInteractionInterface`: `CanInteract` / `DoInteract` 계약 보장
+- **상호작용 액터** (`AACDDoor`, `AACDLever`, `AACDChest`): 상태는 C++에서 관리, 연출은 BP에서 구현
 
 ### 퍼즐 요소
-- **발판 (BP-only)**: 서버 권한 Overlap Count → 큰 문 열림/닫힘 시작 트리거  
-- **큰 문 (BP-only)**: 서버/클라이언트 **모두 타임라인 재생**  
-  - RepNotify로 열림/닫힘 **시작 시점** 동기화  
-  - 서버는 충돌(Blocking) 제어 권한 유지, 클라에서는 동일 타임라인으로 시각 연출  
-- **레버 (C++, 상호작용)**: `bIsOn` 서버 플래그 → **큰 문 영구 개방**  
-- **작은 문 (C++, 상호작용)**: `bIsOpen` 서버 플래그 → **열기/닫기** 토글
-
-> **요약**: 서버가 상태와 시작 시점을 확정 → 서버·클라 모두 같은 타임라인 실행으로 연출·충돌 동기화
+- **발판 (BP-only)**: 서버 권한 Overlap Count → 유리벽 하강/상승 제어
+- **큰 문 (BP-only)**: RepNotify로 열림/닫힘 시작 시점을 동기화  
+  - 서버는 충돌(Blocking) 권한 유지  
+  - 서버·클라 모두 동일 타임라인 재생 → 연출 일치
+- **레버 (C++)**: `bIsOn` 서버 플래그 → 큰 문 개방/차단
+- **작은 문 (C++)**: 최초 Key 필요, 소비 후 해금 → 이후 자유 출입 가능
 
 ### 캐릭터 & 컨트롤러
-- `AACDCharacterBase`: 이동/점프/카메라 (Enhanced Input)  
-- `AACDCharacter`: Interact 입력 → **서버 RPC** 요청  
+- `AACDCharacterBase`: 이동/점프/카메라 (Enhanced Input)
+- `AACDCharacter`: Interact 입력 처리 → 서버 RPC 요청
 - `AACDPlayerController`: Sensor 타깃 변경 수신 → Prompt 갱신 → UIManager 전달, UI 모드 토글
 
 ### 매니저 & 서브시스템
-- `UACDDataRegistry`: DataTable 초기화(로그)  
-- `UACDQuestManager / UACDItemManager / UACDInteractionManager`: **구조 준비**(추후 로직 연동)  
-- `UACDUIManager (LocalPlayerSubsystem)`: HUD 보장 생성 + **Prompt API**  
-  *(토스트/퀘스트 UI API는 계획 단계)*
+- `UACDItemManager`: DataTable 캐시 및 보상 지급
+- `UACDUIManager`: HUD 보장 생성, Prompt/Toast/Inventory 전달 API
+- `UACDQuestManager`: 뼈대만 구축 (확장 포인트)
 
 ### UI & HUD
-- `UACDPlayerHUDWidget`: C++ API 시그니처 제공, 연출은 BP에서 구현
+- `UACDPlayerHUDWidget`: C++ API 시그니처 제공  
+  - **Prompt/Inventory는 구현됨**  
+  - **Toast/Quest는 API 수준 준비, 추후 확장 포인트**  
+- `UACDInventoryWidget`: 인벤토리 반영 (아이콘/수량)
 
 ---
 
 ## 🌐 네트워크 고려 사항
-- **입력**: 클라 → 서버 RPC → 서버에서 `CanInteract` 검증 후 실행  
-- **상태 동기화**: Interactable 상태는 **서버에서만 변경** → RepNotify/Multicast 반영  
-- **Sensor 타깃**: **OwnerOnly 복제**(본인 전용 프롬프트)  
-- **Co-op 퍼즐**:  
-  - 서버가 열림/닫힘 상태와 시작 시점을 확정  
-  - 서버·클라 모두 타임라인을 실행 → 동일한 열림/닫힘 연출  
-  - 서버는 충돌 제어 권한 유지
-
----
-
-## 🔜 네트워크 보강 예정
-- 거리/시야(LineTrace) 기반 검증 강화  
-- 센서 후보 우선순위 개선  
-- 짧은 쿨다운 타이머 적용
-
+- **입력 흐름**: 클라 → 서버 RPC → 서버 `CanInteract` 검증 → 실행
+- **상태 동기화**: Interactable 상태는 서버에서만 변경, RepNotify/델리게이트로 반영
+- **Inventory**: OwnerOnly FastArray 복제 → OnRep 후 UI Delegate로 갱신
+- **Sensor 타깃**: OwnerOnly 복제 (본인만 프롬프트 표시)
+- **퍼즐 연출**: 서버가 열림/닫힘 시점 확정 → 서버·클라 모두 같은 타임라인 실행
 ---
 
 ## 📂 코드 & BP 맵
 ```plaintext
-/Common
-  ACDEnum
 /Character
-  ACDCharacterBase / ACDCharacter
+ACDCharacterBase / ACDCharacter
 /PlayerController
-  ACDPlayerController
+ACDPlayerController
 /PlayerState
-  ACDPlayerState
+ACDPlayerState
 /Component
-  ACDInteractionSensorComponent / ACDInteractableComponent
+ACDInteractionSensorComponent / ACDInteractableComponent
 /Interface
-  ACDInteractionInterface
+ACDInteractionInterface
 /ObjectActor
-  ACDLever / ACDDoor / ACDChest
+ACDLever / ACDDoor / ACDChest
+/Inventory
+ACDInventoryComponent / ACDInventoryTypes
 /Manager
-  ACDQuestManager / ACDItemManager / ACDDataRegistry / ACDInteractionManager / ACDUIManager
+ACDItemManager / ACDUIManager / ACDQuestManager
 /UI/HUD
-  ACDPlayerHUDWidget
-/Puzzle (BP-only)
-  BP_PressurePlate / BP_BigDoor
+ACDPlayerHUDWidget / ACDInventoryWidget
+/Puzzle (BP)
+BP_PressurePlate / BP_GlassWall / BP_BigDoor
