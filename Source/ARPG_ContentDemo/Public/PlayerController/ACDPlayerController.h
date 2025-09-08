@@ -9,6 +9,8 @@
 
 class UInputMappingContext;
 class UInputAction;
+class UACDInteractionSensorComponent;
+struct FACDInventoryItem;
 
 /**
  * 플레이어 컨트롤러
@@ -39,7 +41,13 @@ private:
     void BindToPawnSensor(APawn* NewPawn);
 
     UFUNCTION()
+    void BindInventory();
+
+    UFUNCTION()
     void UpdateInteractionTargetUIInfo();
+
+    UFUNCTION()
+    void HandleOnInventoryUpdated(const TArray<FACDInventoryItem>& Items);
 
     UEnhancedInputLocalPlayerSubsystem* GetInputSubsystem() const;
     void AddContext(UInputMappingContext* Context, int32 Priority) const;
@@ -62,6 +70,10 @@ public:
     TObjectPtr<UInputAction> ToggleUIAction;
 
 private:
+    // 캐릭터의 상호작용 센서 캐시
+    UPROPERTY()
+    TWeakObjectPtr<UACDInteractionSensorComponent> CachedInteractionSensor;
+
     // 현재 상호작용 타겟
     UPROPERTY(transient)
     TWeakObjectPtr<AActor> InteractionTarget;

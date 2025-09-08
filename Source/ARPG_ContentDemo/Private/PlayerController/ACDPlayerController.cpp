@@ -4,9 +4,12 @@
 #include "PlayerController/ACDPlayerController.h"
 #include "Component/ACDInteractionSensorComponent.h"
 #include "Component/ACDInteractableComponent.h"
+#include "PlayerState/ACDPlayerState.h"
+#include "Inventory/ACDInventoryComponent.h"
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/ACDPlayerHUDWidget.h"
 #include "Manager/ACDUIManager.h"
 
 void AACDPlayerController::BeginPlay()
@@ -14,6 +17,7 @@ void AACDPlayerController::BeginPlay()
     Super::BeginPlay();
 
     AddContext(GameplayContext, 0);
+    BindInventory();
     BindToPawnSensor(GetPawn());
 }
 
@@ -32,8 +36,7 @@ void AACDPlayerController::SetupInputComponent()
 
 void AACDPlayerController::OnPossess(APawn* InPawn)
 {
-    Super::OnPossess(InPawn);
-    
+    Super::OnPossess(InPawn);    
     BindToPawnSensor(InPawn);
 }
 
@@ -47,13 +50,23 @@ void AACDPlayerController::OnUnPossess()
 
 void AACDPlayerController::BindToPawnSensor(APawn* NewPawn)
 {
-    // 기존 바인딩 해제
-    if (APawn* Old = GetPawn())
+    if (!IsLocalController()) return;
+
+    // 이전 센서 및 타깃 UI/델리게이트 정리
+    if (UACDInteractionSensorComponent* OldInteractionSensor = CachedInteractionSensor.Get())
     {
-        if (UACDInteractionSensorComponent* OldInteractionSensor = Old->FindComponentByClass<UACDInteractionSensorComponent>())
+        OldInteractionSensor->OnTargetChanged.RemoveDynamic(this, &AACDPlayerController::OnInteractionTargetChanged);
+    }
+    CachedInteractionSensor.Reset();
+
+    if (InteractionTarget.IsValid())
+    {
+        if (UACDInteractableComponent* InteractableComponent = InteractionTarget.Get()->FindComponentByClass<UACDInteractableComponent>())
         {
-            OldInteractionSensor->OnTargetChanged.RemoveDynamic(this, &AACDPlayerController::OnInteractionTargetChanged);
+            InteractableComponent->OnChangedInteractInfo.RemoveDynamic(this, &AACDPlayerController::UpdateInteractionTargetUIInfo);
         }
+
+        InteractionTarget = nullptr;
     }
 
     // 새 폰 바인딩
@@ -62,6 +75,24 @@ void AACDPlayerController::BindToPawnSensor(APawn* NewPawn)
         if (UACDInteractionSensorComponent* NewInteractionSensor = NewPawn->FindComponentByClass<UACDInteractionSensorComponent>())
         {
             NewInteractionSensor->OnTargetChanged.AddUniqueDynamic(this , &AACDPlayerController::OnInteractionTargetChanged);
+            CachedInteractionSensor = NewInteractionSensor;
+        }
+    }
+
+    // UI 초기화
+    UpdateInteractionTargetUIInfo();
+}
+
+void AACDPlayerController::BindInventory()
+{
+    if (APawn* ColtrolledPawn = GetPawn())
+    {
+        if (AACDPlayerState* PS = ColtrolledPawn->GetPlayerState<AACDPlayerState>())
+        {
+            if (UACDInventoryComponent* InventoryComponent = PS->FindComponentByClass<UACDInventoryComponent>())
+            {
+                InventoryComponent->OnInventoryUpdated.AddUniqueDynamic(this, &AACDPlayerController::HandleOnInventoryUpdated);
+            }
         }
     }
 }
@@ -77,6 +108,8 @@ UEnhancedInputLocalPlayerSubsystem* AACDPlayerController::GetInputSubsystem() co
 
 void AACDPlayerController::AddContext(UInputMappingContext* Context, int32 Priority) const
 {
+    if (!IsLocalController()) return;
+
     if (UEnhancedInputLocalPlayerSubsystem* Subsystem = GetInputSubsystem(); Subsystem && Context)
     {
         Subsystem->AddMappingContext(Context, Priority);
@@ -85,7 +118,9 @@ void AACDPlayerController::AddContext(UInputMappingContext* Context, int32 Prior
 
 void AACDPlayerController::RemoveContext(UInputMappingContext* Context) const
 {
-    if (auto* Subsystem = GetInputSubsystem(); Subsystem && Context)
+    if (!IsLocalController()) return;
+
+    if (UEnhancedInputLocalPlayerSubsystem* Subsystem = GetInputSubsystem(); Subsystem && Context)
     {
         Subsystem->RemoveMappingContext(Context);
     }
@@ -109,6 +144,20 @@ void AACDPlayerController::UpdateInteractionTargetUIInfo()
             }
 
             UIManager->SetInteractionPrompt(PromptText, bIsVisible);
+        }
+    }
+}
+
+void AACDPlayerController::HandleOnInventoryUpdated(const TArray<FACDInventoryItem>& Items)
+{
+    if (ULocalPlayer* LP = GetLocalPlayer())
+    {
+        if (UACDUIManager* UIManager = LP->GetSubsystem<UACDUIManager>())
+        {
+            if (UACDPlayerHUDWidget* PlayerHUD = UIManager->GetHUD()) // 함수 추가 필요
+            {
+                PlayerHUD->UpdateInventoryUI(Items);
+            }
         }
     }
 }
@@ -148,7 +197,7 @@ void AACDPlayerController::OnInteractionTargetChanged_Implementation(AActor* New
     {
         if (UACDInteractableComponent* InteractableComponent = InteractionTarget.Get()->FindComponentByClass<UACDInteractableComponent>())
         {
-            InteractableComponent->OnChangedInteractInfo.RemoveAll(this);            
+            InteractableComponent->OnChangedInteractInfo.RemoveDynamic(this, &AACDPlayerController::UpdateInteractionTargetUIInfo);
         }
     }
 
