@@ -17,7 +17,7 @@ struct FACDRewardRow;
  * - 아이템 정의 캐시 및 조회
  * - 보상 테이블 조회 및 지급 헬퍼
  */
-UCLASS()
+UCLASS(BlueprintType)
 class ARPG_CONTENTDEMO_API UACDItemManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
@@ -34,7 +34,10 @@ public:
     TObjectPtr<UDataTable> RewardTable = nullptr;
 
     // Item 및 Reward Row 조회 */
+    UFUNCTION(BlueprintCallable, Category="Item")
     bool GetItemRowByID(int32 ItemId, FACDItemRow& OutItemRow) const;
+
+    UFUNCTION(BlueprintCallable, Category="Reward")
     bool GetRewardRow(FName RowName, FACDRewardRow& OutRewardRow) const;
 
     // Reward 지급(Server only)

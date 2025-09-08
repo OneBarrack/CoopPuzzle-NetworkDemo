@@ -14,8 +14,11 @@ public:
     bool IsEmpty() const { return ItemID <= 0 || Quantity <= 0; }
 
 public:
-    UPROPERTY() int32 ItemID = 0; // 서버/DB/네트워크 핵심 키
-    UPROPERTY() int32 Quantity = 0;    
+    UPROPERTY(BlueprintReadOnly) 
+    int32 ItemID = 0; // 서버/DB/네트워크 핵심 키
+
+    UPROPERTY(BlueprintReadOnly) 
+    int32 Quantity = 0;
 };
 
 USTRUCT()

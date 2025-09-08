@@ -9,7 +9,7 @@
 class UACDPlayerHUDWidget;
 
 /** LocalPlayer 단위 UI 매니저: HUD 1회 생성/재사용 + 간단 API 제공 */
-UCLASS()
+UCLASS(BlueprintType)
 class ARPG_CONTENTDEMO_API UACDUIManager : public ULocalPlayerSubsystem
 {
     GENERATED_BODY()
