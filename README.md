@@ -72,9 +72,14 @@ Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프�
 
 ### UI & HUD
 - `UACDPlayerHUDWidget`: C++ API 시그니처 제공  
-  - **Prompt/Inventory는 구현됨**  
-  - **Toast/Quest는 API 수준 준비, 추후 확장 포인트**  
+  - Prompt/Inventory는 구현됨  
+  - Toast/Quest는 API 수준 준비, 추후 확장  
 - `UACDInventoryWidget`: 인벤토리 반영 (아이콘/수량)
+
+### 테이블 데이터
+- `FACDItemRow`: DataTable 기반 아이템 정의 Row (DT_ItemTable로 CSV/JSON 원본 관리)
+- `FACDRewardRow`: DataTable 기반 보상 정의 Row (DT_RewardTable로 CSV/JSON 원본 관리)  
+  - DataTable은 **에디터에서 로드 후 캐싱**하여 `ItemManager`에서 지급/조회 처리
 
 ---
 
@@ -88,23 +93,54 @@ Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프�
 
 ## 📂 코드 & BP 맵
 ```plaintext
+[Source]
 /Character
-ACDCharacterBase / ACDCharacter
+  ACDCharacterBase / ACDCharacter
 /PlayerController
-ACDPlayerController
+  ACDPlayerController
 /PlayerState
-ACDPlayerState
+  ACDPlayerState
 /Component
-ACDInteractionSensorComponent / ACDInteractableComponent
+  ACDInteractionSensorComponent / ACDInteractableComponent
 /Interface
-ACDInteractionInterface
+  ACDInteractionInterface
 /ObjectActor
-ACDLever / ACDDoor / ACDChest
+  ACDLever / ACDDoor / ACDChest
 /Inventory
-ACDInventoryComponent / ACDInventoryTypes
+  ACDInventoryComponent / ACDInventoryTypes
 /Manager
-ACDItemManager / ACDUIManager / ACDQuestManager
-/UI/HUD
-ACDPlayerHUDWidget / ACDInventoryWidget
-/Puzzle (BP)
-BP_PressurePlate / BP_GlassWall / BP_BigDoor
+  ACDItemManager / ACDUIManager / ACDQuestManager
+/UI
+  ACDPlayerHUDWidget / ACDInventoryWidget
+
+[BP]
+/Core
+  BP_GameMode_ACD / BP_PlayerState / BP_PlayerController
+  /Character
+    BP_CharacterBase / BP_Character
+/ObjectActor
+  BP_GlassBarricade
+  /Chest
+    BP_InteractableChestBase / BP_Chest
+  /Door
+    BP_InteractableDoorBase / BP_Door / BP_BigDoor
+  /Lever
+    BP_InteractableLeverBase / BP_Lever
+  /PressurePlate
+    BP_PressurePlate
+/UI
+  WBP_PlayerHUD
+  /Inventory
+    WBP_Inventory / WBP_ItemSlot
+  /Interaction
+    WBP_InteractionText
+
+[Data]
+/Data
+  DT_ItemTable / DT_RewardTable
+
+[Input]
+/Input
+  IMC_GamePlay / IMC_UI
+  /Actions
+    IA_Move / IA_Jump / IA_Look / IA_Interact / IA_Inventory
