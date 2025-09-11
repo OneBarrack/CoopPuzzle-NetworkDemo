@@ -10,7 +10,7 @@ Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프�
 ## 📌 프로젝트 개요
 - **목적**: 짧고 완결된 루프(MVP)를 통해 최신 UE5 네트워크 및 시스템 아키텍처를 **실험·검증**
 - **개발 기간**: 2025.08.26 ~ 2025.09.09 (MVP 구현)
-- **포커스**: Interaction, Replication, Inventory, Subsystem, UI 연동  
+- **포커스**: Interaction, Replication, Inventory, FastArray, Subsystem, EnhancedInput, UI 연동  
 - **의도**: 실무 경험을 확장하고, 최신 엔진 기능을 직접 적용해본 예시 프로젝트
 
 ---
