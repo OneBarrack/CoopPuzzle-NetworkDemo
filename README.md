@@ -1,4 +1,4 @@
-# 🎮 Co-op Puzzle & Network Demo
+# Co-op Puzzle & Network Demo
 Unreal Engine 5 / Dedicated Server 기반 **멀티플레이 시스템 데모**  
 
 ---
@@ -7,7 +7,7 @@ Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프�
 **MVP(Proof-of-Concept) 방식으로 짧고 명확하게 구현한 멀티플레이 예시 데모**입니다.  
 상용 수준의 모든 기능을 담기보다는, 핵심 시스템 구조(코드·BP)를 작지만 완결된 사이클로 검증하는 데 집중했습니다.
 
-## 📌 프로젝트 개요
+## 프로젝트 개요
 - **목적**: 짧고 완결된 루프(MVP)를 통해 최신 UE5 네트워크 및 시스템 아키텍처를 **실험·검증**
 - **개발 기간**: 2025.08.26 ~ 2025.09.09 (MVP 구현)
 - **포커스**: Interaction, Replication, Inventory, FastArray, Subsystem, EnhancedInput, UI 연동  
@@ -15,7 +15,7 @@ Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프�
 
 ---
 
-## ✅ 구현 범위
+## 구현 범위
 - **Interaction 시스템**  
   `UACDInteractionSensorComponent` (Sensor) / `IACDInteractionInterface` (Interface) / `UACDInteractableComponent` (Interactable)
 - **상호작용 액터**  
@@ -32,7 +32,7 @@ Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프�
 
 ---
 
-## 🕹️ 게임 플레이 루프 (데모 시나리오 — **골격 구현 기준**)
+## 게임 플레이 루프 (데모 시나리오 — **골격 구현 기준**)
 <img src="https://github.com/user-attachments/assets/8278e243-0fda-46b0-8bd8-b43a6aee2010" width="400" height="225"/>
 <img src="https://github.com/user-attachments/assets/f0a8e4c6-c869-45f5-9b07-642d714238a5" width="400" height="225"/>  
 
@@ -44,7 +44,7 @@ Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프�
 
 ---
 
-## 🛠️ 시스템 구조
+## 시스템 구조
 
 ### Interaction
 - `UACDInteractionSensorComponent`: 서버에서 후보 탐색 및 주기 평가, `CurrentTargetActor` OwnerOnly 복제, `ForceUpdate` 지원
@@ -83,7 +83,7 @@ Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프�
 
 ---
 
-## 🌐 네트워크 고려 사항
+## 네트워크 고려 사항
 - **입력 흐름**: 클라 → 서버 RPC → 서버 `CanInteract` 검증 → 실행
 - **상태 동기화**: Interactable 상태는 서버에서만 변경, RepNotify/델리게이트로 반영
 - **Inventory**: OwnerOnly FastArray 복제 → OnRep 후 UI Delegate로 갱신
@@ -91,7 +91,7 @@ Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프�
 - **퍼즐 연출**: 서버가 열림/닫힘 시점 확정 → 서버·클라 모두 같은 타임라인 실행
 ---
 
-## 📂 코드 & BP 맵
+## 코드 & BP 맵
 ```plaintext
 [Source]
 /Character
