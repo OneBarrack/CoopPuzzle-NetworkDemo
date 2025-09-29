@@ -15,6 +15,18 @@ Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프�
 
 ---
 
+## 게임 플레이 루프 (데모 시나리오 — **골격 구현 기준**)
+<img src="https://github.com/user-attachments/assets/8278e243-0fda-46b0-8bd8-b43a6aee2010" width="400" height="225"/>
+<img src="https://github.com/user-attachments/assets/f0a8e4c6-c869-45f5-9b07-642d714238a5" width="400" height="225"/>  
+
+- 발판 + 레버 → 큰 문 협동 퍼즐   
+- 상자 보상 획득 → 인벤토리 UI 반영   
+- Key Door 해금 → Key 소비 후 자유 출입  
+
+▶️ [데모 플레이 영상 (YouTube, 45초)](https://youtu.be/zNMQqJn7SSA)
+
+---
+
 ## 구현 범위
 - **Interaction 시스템**  
   `UACDInteractionSensorComponent` (Sensor) / `IACDInteractionInterface` (Interface) / `UACDInteractableComponent` (Interactable)
@@ -69,18 +81,6 @@ Note: ARPG에서 반복되는 상호작용-인벤토리-보상-게이트 루프�
 - FastArraySerializer 구현: 인벤토리 배열(TArray<FACDInventoryItem>)을 FFastArraySerializer를 상속받는 구조체 내에 래핑했습니다.
 - Diff-Only Replication: 서버는 배열의 전체 내용이 아닌 변경사항(추가/삭제/수정)이 있는 항목만 전파합니다. 이는 네트워크 트래픽을 최소화하고 인벤토리 데이터의 실시간 동기화 효율을 극대화합니다.
 - Owner-Only 복제: 해당 인벤토리 데이터는 ACDPlayerState에서 DOREPLIFETIME_CONDITION을 사용하여 Owner-Only로 설정하여 보안 및 트래픽 효율을 확보했습니다.
-
----
-
-## 게임 플레이 루프 (데모 시나리오 — **골격 구현 기준**)
-<img src="https://github.com/user-attachments/assets/8278e243-0fda-46b0-8bd8-b43a6aee2010" width="400" height="225"/>
-<img src="https://github.com/user-attachments/assets/f0a8e4c6-c869-45f5-9b07-642d714238a5" width="400" height="225"/>  
-
-- 발판 + 레버 → 큰 문 협동 퍼즐   
-- 상자 보상 획득 → 인벤토리 UI 반영   
-- Key Door 해금 → Key 소비 후 자유 출입  
-
-▶️ [데모 플레이 영상 (YouTube, 45초)](https://youtu.be/zNMQqJn7SSA)
 
 ---
 
